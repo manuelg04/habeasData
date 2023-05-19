@@ -1,0 +1,133 @@
+/* eslint-disable react/react-in-jsx-scope */
+
+import {
+  Form, Input, Button, Typography, Checkbox, Modal,
+} from 'antd';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+
+const { Title } = Typography;
+
+export default function FormularioHabeasData() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/api/users');
+        console.log(response.data);
+      } catch (error) {
+        console.error('Hubo un error al recuperar los datos del usuario: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const onFinish = async (values) => {
+    console.log(values);
+    try {
+      const response = await axios.post('/api/sendEmail', values);
+      console.log('Correo electrónico enviado: ', response.data);
+    } catch (error) {
+      console.error('Error al enviar el correo electrónico: ', error);
+    }
+  };
+
+  return (
+
+    <div style={{
+      display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh',
+    }}
+    >
+      <Title level={2}>Formulario para el control Política Tratamiento de datos - Habeas Data</Title>
+      <Form
+        name="basic"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        autoComplete="off"
+      >
+        <Form.Item
+          label="Nombre completo"
+          name="nombre"
+          rules={[{ required: true, message: 'Por favor ingresa tu nombre completo!' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Cedula"
+          name="cedula"
+          rules={[{ required: true, message: 'Por favor ingresa tu número de cedula!' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Celular"
+          name="celular"
+          rules={[{ required: true, message: 'Por favor ingresa tu número de celular!' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Correo electrónico"
+          name="correo"
+          rules={[
+            {
+              type: 'email',
+              message: 'El correo electrónico no es válido!',
+            },
+            {
+              required: true,
+              message: 'Por favor ingresa tu correo electrónico!',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item>
+
+          <Form.Item
+            name="acepto"
+            valuePropName="checked"
+            rules={[
+              {
+                validator: (_, value) => (value ? Promise.resolve() : Promise.reject(new Error('Debes aceptar las políticas de protección de datos personales'))),
+              },
+            ]}
+          >
+            <Checkbox>
+              Acepto las
+              {' '}
+              <a href="#" onClick={showModal} style={{ color: 'blue' }}>políticas de protección de datos personales</a>
+            </Checkbox>
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Enviar
+            </Button>
+          </Form.Item>
+        </Form.Item>
+      </Form>
+      <Modal title="Políticas de protección de datos personales" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        {/* Aquí puedes poner el contenido de tu modal */}
+      </Modal>
+    </div>
+  );
+}
