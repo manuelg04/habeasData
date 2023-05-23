@@ -1,14 +1,14 @@
 /* eslint-disable no-return-await */
-// pages/api/sendEmail.ts
+/* eslint-disable consistent-return */
 import { render } from '@react-email/render';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest } from 'next';
 import nodemailer from 'nodemailer';
 import PlantillaEmail from '../../emails/plantillaEmail';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest) {
   if (req.method === 'POST') {
     const {
-      nombre, celular, cedula, correo,
+      correo,
     } = req.body;
 
     const transporter = nodemailer.createTransport({

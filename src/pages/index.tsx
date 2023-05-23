@@ -1,18 +1,17 @@
-/* eslint-disable max-len */
-/* eslint-disable react/react-in-jsx-scope */
-
 import {
   Form, Input, Button, Typography, Checkbox, Modal, message,
 } from 'antd';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { Usuario } from '../tipos';
+
 const { Title } = Typography;
 
 export default function FormularioHabeasData() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-  const [formValues, setFormValues] = useState({});
+  const [formValues, setFormValues] = useState<Usuario>({});
   const [form] = Form.useForm();
 
   const showModal = () => {
@@ -30,29 +29,24 @@ export default function FormularioHabeasData() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/users');
-        console.log(response.data);
+        await axios.get('/api/users');
       } catch (error) {
-        console.error('Hubo un error al recuperar los datos del usuario: ', error);
+        message.error('Hubo un error al obtener la información, por favor intente nuevamente');
       }
     };
 
     fetchData();
   }, []);
 
-  const VerificarData = async (values) => {
-    console.log(values);
-    form.submit();
+  const VerificarData = async () => {
     setIsConfirmModalVisible(false);
     try {
       message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
       form.resetFields();
-      const responseSaveUser = await axios.post('/api/saveUsers', formValues);
-      console.log('Datos del usuario guardados: ', responseSaveUser.data);
-      const responseEmail = await axios.post('/api/sendEmail', formValues);
-      console.log('Correo electrónico enviado: ', responseEmail.data);
+      await axios.post('/api/saveUsers', formValues);
+      await axios.post('/api/sendEmail', formValues);
     } catch (error) {
-      console.error('Error al guardar los datos del usuario: ', error);
+      message.error('Hubo un error al enviar la información, por favor intente nuevamente');
     }
   };
 
@@ -60,7 +54,7 @@ export default function FormularioHabeasData() {
     setIsConfirmModalVisible(false);
   };
 
-  const onFinish = (values) => {
+  const onFinish = (values: Usuario) => {
     const data = {
       nombre: values.nombre,
       cedula: values.cedula,
@@ -79,7 +73,12 @@ export default function FormularioHabeasData() {
       display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh',
     }}
     >
-      <Title level={2}>Formulario para el control Política Tratamiento de datos - Habeas Data</Title>
+      <Title
+        level={2}
+      >
+        Formulario para el control Política Tratamiento de datos - Habeas Data
+
+      </Title>
       <Form
         name="basic"
         initialValues={{ remember: true }}
@@ -127,7 +126,7 @@ export default function FormularioHabeasData() {
         >
           <Input />
         </Form.Item>
-        <Modal title="Confirmación de información" visible={isConfirmModalVisible} onOk={VerificarData} onCancel={handleVerify}>
+        <Modal title="Confirmación de información" open={isConfirmModalVisible} onOk={VerificarData} onCancel={handleVerify}>
           <p>
             Nombre completo:
             {' '}
@@ -164,7 +163,7 @@ export default function FormularioHabeasData() {
             <Checkbox>
               Acepto las
               {' '}
-              <a href="#" onClick={showModal} style={{ color: 'blue' }}>políticas de protección de datos personales</a>
+              <Button type="text" onClick={showModal} style={{ color: 'blue' }}>políticas de protección de datos personales</Button>
             </Checkbox>
           </Form.Item>
 

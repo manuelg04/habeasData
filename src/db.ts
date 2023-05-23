@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable import/prefer-default-export */
 import mysql from 'mysql2/promise';
 
 const pool = mysql.createPool({
