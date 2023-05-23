@@ -38,8 +38,7 @@ export default function FormularioHabeasData() {
     fetchData();
   }, []);
 
-  const VerificarData = async () => {
-    setIsConfirmModalVisible(false);
+  const sendEmail = async () => {
     try {
       message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
       form.resetFields();
@@ -50,8 +49,26 @@ export default function FormularioHabeasData() {
     }
   };
 
+  const VerificarData = async () => {
+    setIsConfirmModalVisible(false);
+    await sendEmail();
+  };
+
   const handleVerify = () => {
     setIsConfirmModalVisible(false);
+  };
+
+  const verificarUsuario = async () => {
+    try {
+      const response = await axios.get(`/api/users${formValues.cedula}`);
+      if (response.data) {
+        message.success('El usuario ya se encuentra registrado');
+      } else {
+        message.success('El usuario no se encuentra registrado');
+      }
+    } catch (error) {
+      message.error('Hubo un error al obtener la información, por favor intente nuevamente');
+    }
   };
 
   const onFinish = (values: Usuario) => {
