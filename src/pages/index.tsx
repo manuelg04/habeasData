@@ -1,7 +1,8 @@
+/* eslint-disable max-len */
 /* eslint-disable react/react-in-jsx-scope */
 
 import {
-  Form, Input, Button, Typography, Checkbox, Modal,
+  Form, Input, Button, Typography, Checkbox, Modal, message,
 } from 'antd';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -10,6 +11,7 @@ const { Title } = Typography;
 
 export default function FormularioHabeasData() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -38,17 +40,14 @@ export default function FormularioHabeasData() {
 
   const onFinish = async (values) => {
     try {
-      const response = await axios.post('/api/saveUsers', values);
-      console.log('Datos del usuario guardados: ', response.data);
+      message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
+      form.resetFields();
+      const responseSaveUser = await axios.post('/api/saveUsers', values);
+      console.log('Datos del usuario guardados: ', responseSaveUser.data);
+      const responseEmail = await axios.post('/api/sendEmail', values);
+      console.log('Correo electrónico enviado: ', responseEmail.data);
     } catch (error) {
       console.error('Error al guardar los datos del usuario: ', error);
-    }
-
-    try {
-      const response = await axios.post('/api/sendEmail', values);
-      console.log('Correo electrónico enviado: ', response.data);
-    } catch (error) {
-      console.error('Error al enviar el correo electrónico: ', error);
     }
   };
 
@@ -64,6 +63,7 @@ export default function FormularioHabeasData() {
         initialValues={{ remember: true }}
         onFinish={onFinish}
         autoComplete="off"
+        form={form}
       >
         <Form.Item
           label="Nombre completo"
