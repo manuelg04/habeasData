@@ -11,6 +11,8 @@ const { Title } = Typography;
 
 export default function FormularioHabeasData() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+  const [formValues, setFormValues] = useState({});
   const [form] = Form.useForm();
 
   const showModal = () => {
@@ -38,17 +40,37 @@ export default function FormularioHabeasData() {
     fetchData();
   }, []);
 
-  const onFinish = async (values) => {
+  const VerificarData = async (values) => {
+    console.log(values);
+    form.submit();
+    setIsConfirmModalVisible(false);
     try {
       message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
       form.resetFields();
-      const responseSaveUser = await axios.post('/api/saveUsers', values);
+      const responseSaveUser = await axios.post('/api/saveUsers', formValues);
       console.log('Datos del usuario guardados: ', responseSaveUser.data);
-      const responseEmail = await axios.post('/api/sendEmail', values);
+      const responseEmail = await axios.post('/api/sendEmail', formValues);
       console.log('Correo electrónico enviado: ', responseEmail.data);
     } catch (error) {
       console.error('Error al guardar los datos del usuario: ', error);
     }
+  };
+
+  const handleVerify = () => {
+    setIsConfirmModalVisible(false);
+  };
+
+  const onFinish = (values) => {
+    const data = {
+      nombre: values.nombre,
+      cedula: values.cedula,
+      celular: values.celular,
+      correo: values.correo,
+      acepto: values.acepto,
+    };
+
+    setFormValues(data);
+    setIsConfirmModalVisible(true);
   };
 
   return (
@@ -105,6 +127,28 @@ export default function FormularioHabeasData() {
         >
           <Input />
         </Form.Item>
+        <Modal title="Confirmación de información" visible={isConfirmModalVisible} onOk={VerificarData} onCancel={handleVerify}>
+          <p>
+            Nombre completo:
+            {' '}
+            {formValues.nombre}
+          </p>
+          <p>
+            Cedula:
+            {' '}
+            {formValues.cedula}
+          </p>
+          <p>
+            Celular:
+            {' '}
+            {formValues.celular}
+          </p>
+          <p>
+            Correo electrónico:
+            {' '}
+            {formValues.correo}
+          </p>
+        </Modal>
 
         <Form.Item>
 
