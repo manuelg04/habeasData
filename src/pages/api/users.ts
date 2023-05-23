@@ -6,6 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const users = await fetchUsersData();
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Error al recuperar los datos del usuario.' });
+    res.status(500).json({ message: 'Error al recuperar los datos del usuario.', error: error.message });
   }
 }

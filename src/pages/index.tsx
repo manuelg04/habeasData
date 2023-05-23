@@ -37,7 +37,13 @@ export default function FormularioHabeasData() {
   }, []);
 
   const onFinish = async (values) => {
-    console.log(values);
+    try {
+      const response = await axios.post('/api/saveUsers', values);
+      console.log('Datos del usuario guardados: ', response.data);
+    } catch (error) {
+      console.error('Error al guardar los datos del usuario: ', error);
+    }
+
     try {
       const response = await axios.post('/api/sendEmail', values);
       console.log('Correo electrónico enviado: ', response.data);
