@@ -5,7 +5,7 @@ import Link from 'next/link';
 const { Item } = Menu;
 
 const NavBar = () => (
-  <Menu mode="horizontal">
+  <Menu mode="horizontal" style={{ display: 'flex', justifyContent: 'center' }}>
     <Item key="1">
       <Link href="/">Inicio</Link>
     </Item>
