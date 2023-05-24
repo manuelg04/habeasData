@@ -1,6 +1,6 @@
-import PlantillaEmail from '../emails/plantillaEmail';
 import '../styles/globals.css';
 import Navbar from '../../components/navBar';
+import PlantillaEmail from '../emails/plantillaEmail';
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -8,6 +8,7 @@ function MyApp({ Component, pageProps }) {
     <>
       <Navbar />
       <Component {...pageProps} />
+      <PlantillaEmail />
     </>
 
   );
