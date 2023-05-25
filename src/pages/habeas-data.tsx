@@ -43,14 +43,21 @@ export default function FormularioHabeasData() {
     try {
       const response = await axios.get(`/api/verifyUsers?cedula=${data.cedula}`);
       if (response.data) {
-        message.success('El usuario ya se encuentra registrado');
-        return true; // Existe
+        message.error('El usuario ya se encuentra registrado');
+        return true;
       }
-      message.success('El usuario no se encuentra registrado');
-      return false; // No existe
+      return false;
     } catch (error) {
-      message.error('Hubo un error al obtener la información, por favor intente nuevamente');
-      return false; // Error, supongamos que no existe
+      message.error('Error al comprobar el usuario');
+    }
+  };
+
+  const crearUsuario = async (data) => {
+    try {
+      await axios.post('/api/saveUsers', data);
+      message.success('Usuario creado correctamente');
+    } catch (error) {
+      message.error('Error al crear el usuario');
     }
   };
 
@@ -58,7 +65,6 @@ export default function FormularioHabeasData() {
     try {
       message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
       form.resetFields();
-      await axios.post('/api/saveUsers', dataForm);
       await axios.post('/api/sendEmail', dataForm);
     } catch (error) {
       message.error('Hubo un error al enviar la información, por favor intente nuevamente');
@@ -74,9 +80,18 @@ export default function FormularioHabeasData() {
     setIsConfirmModalVisible(false);
   };
 
+  const confirmarDatos = () => {
+    setFormValues(form.getFieldsValue());
+    setIsConfirmModalVisible(true);
+  };
   const onFinish = async (values: Usuario) => {
-    await verificarUsuario(values);
-    // await sendEmail(values);
+    const existe = await verificarUsuario(values);
+    if (existe) {
+      await sendEmail(values);
+    } else {
+      await sendEmail(values);
+      await crearUsuario(values);
+    }
     const data = {
       nombre: values.nombre,
       cedula: values.cedula,
@@ -148,7 +163,14 @@ export default function FormularioHabeasData() {
         >
           <Input />
         </Form.Item>
-        <Modal title="Confirmación de información" open={isConfirmModalVisible} onOk={VerificarData} onCancel={handleVerify}>
+        <Modal
+          title="Confirmación de información"
+          open={isConfirmModalVisible}
+          onOk={VerificarData}
+          onCancel={handleVerify}
+          cancelText="Cancelar"
+          okText="Enviar"
+        >
           <p>
             Nombre completo:
             {' '}
@@ -190,9 +212,19 @@ export default function FormularioHabeasData() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" onClick={() => setIsConfirmModalVisible(true)}>
-              Enviar
+            <Button
+              type="primary"
+              onClick={() => {
+                form.validateFields()
+                  .then(() => {
+                    confirmarDatos();
+                    return null;
+                  }).catch(() => null);
+              }}
+            >
+              Confirmar
             </Button>
+
           </Form.Item>
         </Form.Item>
       </Form>
