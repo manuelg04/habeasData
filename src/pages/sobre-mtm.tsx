@@ -24,12 +24,14 @@ const SobreMTM = () => (
     </Card>
     <Card style={{ marginBottom: '1em' }}>
       <Title level={2}>VISIÓN</Title>
+      <Image src="/Vision.jpg" alt="Misión" width={500} height={300} />
       <Paragraph>
         En el 2025 TRANSPORTES MTM SERVICIOS TERCERIZADOS SAS, será reconocido en el mercado nacional...
       </Paragraph>
     </Card>
     <Card style={{ marginBottom: '1em' }}>
       <Title level={2}>POLÍTICA DE SEGURIDAD</Title>
+      <Image src="/seguridad.jpg" alt="Misión" width={500} height={300} />
       <Paragraph>
         Avisos de seguridad...
       </Paragraph>

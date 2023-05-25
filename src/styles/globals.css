@@ -1,26 +1,19 @@
-/* html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+/* body {
+  background-color: #000;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  color: #0070f3;
 }
 
-* {
-  box-sizing: border-box;
+.navbar {
+  background-color: #101010;
+  border-bottom: 1px solid #333;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+.card {
+  background-color: #202020;
+  border: 1px solid #333;
 } */

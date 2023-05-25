@@ -32,6 +32,9 @@ const NavBar = () => (
         <a href="https://transportesmtm.com/sites/default/files/2023-03/fr_gg_09_politica_de_responsabilidad_social_empresarial.pdf" target="_blank">Política de responsabilidad social empresarial</a>
       </Menu.Item>
     </Menu.SubMenu>
+    <Item key="9">
+      <Link href="/habeas-data">Habeas Data</Link>
+    </Item>
   </Menu>
 );
 
