@@ -1,41 +1,65 @@
 // NavBar.tsx
 import { Menu } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-const { Item } = Menu;
+const { Item, SubMenu } = Menu;
 
-const NavBar = () => (
-  <Menu mode="horizontal" style={{ display: 'flex', justifyContent: 'center' }}>
-    <Item key="1">
-      <Link href="/">Inicio</Link>
-    </Item>
-    <Item key="2">
-      <Link href="/sobre-mtm">Sobre MTM</Link>
-    </Item>
-    <Item key="3">
-      <Link href="/servicios">Servicios</Link>
-    </Item>
-    <Item key="4">
-      <Link href="/contactanos">Contáctanos</Link>
-    </Item>
-    <Menu.SubMenu key="SubMenu" title="Políticas">
-      <Menu.Item key="5">
-        <a href="https://www.transportesmtm.com/sites/default/files/2022-12/fr_sv_03_politica_de_seguridad_vial_2022.pdf" target="_blank">Política de seguridad vial</a>
-      </Menu.Item>
-      <Menu.Item key="6">
-        <a href="https://www.transportesmtm.com/sites/default/files/2023-02/pr_lg_02_protocolo_de_seguridad_de_la_carga_triple_aaa.pdf" target="_blank">Política de seguridad transporte AAA</a>
-      </Menu.Item>
-      <Menu.Item key="7">
-        <a href="https://www.transportesmtm.com/sites/default/files/2023-02/fr_gg_01_politica_de_control_y_seguridad.pdf" target="_blank">Política de control y seguridad</a>
-      </Menu.Item>
-      <Menu.Item key="8">
-        <a href="https://transportesmtm.com/sites/default/files/2023-03/fr_gg_09_politica_de_responsabilidad_social_empresarial.pdf" target="_blank">Política de responsabilidad social empresarial</a>
-      </Menu.Item>
-    </Menu.SubMenu>
-    <Item key="9">
-      <Link href="/habeas-data">Habeas Data</Link>
-    </Item>
-  </Menu>
-);
+const NavBar = () => {
+  const router = useRouter();
+  const [selectedKey, setSelectedKey] = useState<string>('');
+
+  useEffect(() => {
+    setSelectedKey(router.pathname);
+  }, [router.pathname]);
+
+  return (
+    <Menu
+      mode="horizontal"
+      selectedKeys={[selectedKey]}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        borderBottom: 'none',
+        backgroundColor: '#003a8c', // fondo azul oscuro
+        color: '#ffffff', // texto blanco
+        paddingTop: '20px',
+        paddingBottom: '20px',
+      }}
+      theme="dark"
+    >
+      <Item key="/">
+        <Link href="/">Inicio</Link>
+      </Item>
+      <Item key="/sobre-mtm">
+        <Link href="/sobre-mtm">Sobre MTM</Link>
+      </Item>
+      <Item key="/servicios">
+        <Link href="/servicios">Servicios</Link>
+      </Item>
+      <Item key="/contactanos">
+        <Link href="/contactanos">Contáctanos</Link>
+      </Item>
+      <SubMenu key="SubMenu" title="Políticas">
+        <Menu.Item key="5">
+          <a href="https://www.transportesmtm.com/sites/default/files/2022-12/fr_sv_03_politica_de_seguridad_vial_2022.pdf" target="_blank">Política de seguridad vial</a>
+        </Menu.Item>
+        <Menu.Item key="6">
+          <a href="https://www.transportesmtm.com/sites/default/files/2023-02/pr_lg_02_protocolo_de_seguridad_de_la_carga_triple_aaa.pdf" target="_blank">Política de seguridad transporte AAA</a>
+        </Menu.Item>
+        <Menu.Item key="7">
+          <a href="https://www.transportesmtm.com/sites/default/files/2023-02/fr_gg_01_politica_de_control_y_seguridad.pdf" target="_blank">Política de control y seguridad</a>
+        </Menu.Item>
+        <Menu.Item key="8">
+          <a href="https://transportesmtm.com/sites/default/files/2023-03/fr_gg_09_politica_de_responsabilidad_social_empresarial.pdf" target="_blank">Política de responsabilidad social empresarial</a>
+        </Menu.Item>
+      </SubMenu>
+      <Item key="/habeas-data">
+        <Link href="/habeas-data">Habeas Data</Link>
+      </Item>
+    </Menu>
+  );
+};
 
 export default NavBar;

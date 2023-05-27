@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 
 import {
-  Typography, Card, Form, Input, Button, Row, Col,
+  Typography, Card, Form, Input, Button, Row, Col, Image, Space,
 } from 'antd';
 
 const { Title, Text } = Typography;
@@ -21,6 +21,45 @@ const Contactanos = () => (
     >
       Nuestra oficina principal está ubicada en la ciudad de Bucaramanga...
     </Text>
+    <Card
+      style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+        textAlign: 'center',
+        margin: '2em 0',
+      }}
+    >
+      <Row justify="space-around" align="middle">
+        <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/corporativo.jpg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>David</Title>
+            <Text>¡Nuestro Abogado!</Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+          {/* Card para Juan */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/messi.jpg" // Aquí va la URL de la imagen de Juan
+              alt="Juan, nuestro arquitecto"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Juan</Title>
+            <Text>¡Nuestro Arquitecto!</Text>
+          </Space>
+        </Col>
+      </Row>
+    </Card>
+
     <Text style={{
       fontSize: '20px',
       lineHeight: '1.5',
