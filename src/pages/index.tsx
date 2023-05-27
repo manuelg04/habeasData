@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Carousel } from 'antd';
 
 const contentStyle: React.CSSProperties = {
@@ -10,8 +11,7 @@ const contentStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const onChange = (currentSlide: number) => {
-    console.log(currentSlide);
+  const onChange = () => {
   };
 
   return (
