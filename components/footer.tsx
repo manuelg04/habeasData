@@ -1,4 +1,6 @@
-import { Layout, Row, Col, Typography } from 'antd';
+import {
+  Layout, Row, Col, Typography,
+} from 'antd';
 import Image from 'next/image';
 
 const { Footer } = Layout;
