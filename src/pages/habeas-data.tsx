@@ -3,7 +3,7 @@ import {
   Form, Input, Button, Typography, Checkbox, Modal, message, Card,
 } from 'antd';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Usuario } from '../tipos';
 
 const { Title } = Typography;
@@ -25,18 +25,6 @@ export default function FormularioHabeasData() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await axios.get('/api/users');
-      } catch (error) {
-        message.error('Hubo un error al obtener la información, por favor intente nuevamente');
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const verificarUsuario = async (data) => {
     try {
