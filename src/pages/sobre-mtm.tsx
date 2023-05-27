@@ -8,46 +8,110 @@ import Image from 'next/image';
 const { Title, Paragraph } = Typography;
 
 const SobreMTM = () => (
-  <div style={{ padding: '2em' }}>
-    <Card style={{ marginBottom: '1em' }}>
+  <div style={{
+    padding: '2em',
+    backgroundColor: '#f0f2f5',
+    height: '100vh',
+  }}
+  >
+    <Card style={{
+      marginBottom: '1em',
+      backgroundColor: '#ffffff',
+      borderRadius: '8px',
+      boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+    }}
+    >
       <Title level={2}>MISIÓN</Title>
       <Row align="middle" justify="space-between">
         <Col xs={24} sm={24} md={10} lg={10} xl={8}>
           <Image src="/Mision.jpg" alt="Misión" width={500} height={300} />
         </Col>
-        <Col xs={24} sm={24} md={14} lg={14} xl={16} style={{ paddingLeft: '0em' }}>
-          <Paragraph style={{ fontSize: '24px' }}>
-            Somos una empresa dedicada a generar servicio en la modalidad de transporte de carga terrestre seca y a granel a nivel nacional, cien por ciento tercerizada. Contamos con personal idóneo para la prestación del servicio, comprometidos con la satisfacción de nuestros asociados de negocio en la cadena de abastecimiento y demás partes interesadas, así como el cumplimiento de los requisitos legales, normativos e internos aplicables, basándonos en las premisas de eficiencia, dedicación, puntualidad, calidad y seguridad; buscando siempre la mejora continua en cada uno de nuestros procesos ofreciendo soluciones rápidas, prácticas y oportunas.
+        <Col xs={24} sm={24} md={14} lg={14} xl={16} style={{ paddingLeft: '2em' }}>
+          <Paragraph style={{
+            backgroundColor: 'white',
+            fontSize: '20px',
+            lineHeight: '1.5',
+          }}
+          >
+            Somos una empresa dedicada a generar servicio en la modalidad de transporte de carga terrestre...
           </Paragraph>
         </Col>
       </Row>
     </Card>
-    <Card style={{ marginBottom: '1em' }}>
-      <Title level={2}>VISIÓN</Title>
-      <Image src="/Vision.jpg" alt="Misión" width={500} height={300} />
-      <Paragraph>
-        En el 2025 TRANSPORTES MTM SERVICIOS TERCERIZADOS SAS, será reconocido en el mercado nacional...
-      </Paragraph>
+
+    <Card style={{
+      marginBottom: '1em',
+      backgroundColor: '#ffffff',
+      borderRadius: '8px',
+      boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+    }}
+    >
+      <Title level={2}>VISION</Title>
+      <Row align="middle" justify="space-between">
+        <Col xs={24} sm={24} md={10} lg={10} xl={8}>
+          <Image src="/Mision.jpg" alt="Misión" width={500} height={300} />
+        </Col>
+        <Col xs={24} sm={24} md={14} lg={14} xl={16} style={{ paddingLeft: '2em' }}>
+          <Paragraph style={{
+            backgroundColor: 'white',
+            fontSize: '20px',
+            lineHeight: '1.5',
+          }}
+          >
+            Somos una empresa dedicada a generar servicio en la modalidad de transporte de carga terrestre...
+          </Paragraph>
+        </Col>
+      </Row>
     </Card>
-    <Card style={{ marginBottom: '1em' }}>
-      <Title level={2}>POLÍTICA DE SEGURIDAD</Title>
-      <Image src="/seguridad.jpg" alt="Misión" width={500} height={300} />
-      <Paragraph>
-        Avisos de seguridad...
-      </Paragraph>
+    <Card style={{
+      marginBottom: '1em',
+      backgroundColor: '#ffffff',
+      borderRadius: '8px',
+      boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+    }}
+    >
+      <Title level={2}>POLITICA DE SEGURIDAD</Title>
+      <Row align="middle" justify="space-between">
+        <Col xs={24} sm={24} md={10} lg={10} xl={8}>
+          <Image src="/Mision.jpg" alt="Misión" width={500} height={300} />
+        </Col>
+        <Col xs={24} sm={24} md={14} lg={14} xl={16} style={{ paddingLeft: '2em' }}>
+          <Paragraph style={{
+            backgroundColor: 'white',
+            fontSize: '20px',
+            lineHeight: '1.5',
+          }}
+          >
+            Somos una empresa dedicada a generar servicio en la modalidad de transporte de carga terrestre...
+          </Paragraph>
+        </Col>
+      </Row>
     </Card>
-    <Card>
+    <Card style={{
+      marginBottom: '1em',
+      backgroundColor: '#ffffff',
+      borderRadius: '8px',
+      boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+    }}
+    >
       <Title level={2}>VALORES</Title>
-      <Paragraph>
-        Seguridad en las vías...
-      </Paragraph>
-      <Paragraph>
-        Responsabilidad...
-      </Paragraph>
-      <Paragraph>
-        Calidad en el servicio...
-      </Paragraph>
+      <Row align="middle" justify="space-between">
+        <Col xs={24} sm={24} md={10} lg={10} xl={8}>
+          <Image src="/Mision.jpg" alt="Misión" width={500} height={300} />
+        </Col>
+        <Col xs={24} sm={24} md={14} lg={14} xl={16} style={{ paddingLeft: '2em' }}>
+          <Paragraph style={{
+            backgroundColor: 'white',
+            fontSize: '20px',
+            lineHeight: '1.5',
+          }}
+          >
+            Somos una empresa dedicada a generar servicio en la modalidad de transporte de carga terrestre...
+          </Paragraph>
+        </Col>
+      </Row>
     </Card>
+    {/* El resto de las Cards siguen el mismo estilo... */}
   </div>
 );
 

@@ -3,7 +3,9 @@
 import { render } from '@react-email/render';
 import type { NextApiRequest } from 'next';
 import nodemailer from 'nodemailer';
+import { pdf } from '@react-pdf/renderer';
 import PlantillaEmail from '../../emails/plantillaEmail';
+import MyDocument from '../PdfDocumento';
 
 export default async function handler(req: NextApiRequest) {
   if (req.method === 'POST') {
@@ -21,11 +23,21 @@ export default async function handler(req: NextApiRequest) {
       },
     });
 
+    // Generar el archivo PDF
+    const pdfDoc = pdf(MyDocument());
+    const pdfBuffer = await pdfDoc.toBuffer();
+
     const mailOptions = {
       to: correo,
       subject: 'Nuevo formulario de habeas data',
       html: render(PlantillaEmail()),
       bcc: 'habeasdata@transportesmtm.com',
+      attachments: [
+        { // Adjuntar el archivo PDF
+          filename: 'document.pdf',
+          content: pdfBuffer,
+        },
+      ],
     };
 
     return await transporter.sendMail({
