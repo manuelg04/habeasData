@@ -29,13 +29,14 @@ export default function FormularioHabeasData() {
   const verificarUsuario = async (data) => {
     try {
       const response = await axios.get(`/api/verifyUsers?cedula=${data.cedula}`);
-      if (response.data) {
+      if (response.data !== null) {
         message.error('El usuario ya se encuentra registrado');
         return true;
       }
       return false;
     } catch (error) {
-      message.error('Error al comprobar el usuario');
+      // message.error('Error al comprobar el usuario');
+      return true;
     }
   };
 
@@ -59,6 +60,7 @@ export default function FormularioHabeasData() {
   };
 
   const VerificarData = async () => {
+    crearUsuario(formValues);
     form.submit();
     setIsConfirmModalVisible(false); // Cerrar modal
   };
@@ -73,12 +75,12 @@ export default function FormularioHabeasData() {
   };
   const onFinish = async (values: Usuario) => {
     const existe = await verificarUsuario(values);
-    if (existe) {
-      await sendEmail(values);
-    } else {
-      await sendEmail(values);
+    // Siempre enviar el correo
+    await sendEmail(values);
+    if (!existe) {
       await crearUsuario(values);
     }
+
     const data = {
       nombre: values.nombre,
       cedula: values.cedula,
@@ -216,7 +218,7 @@ export default function FormularioHabeasData() {
           </Form.Item>
         </Form>
       </Card>
-      <Modal title="Políticas de protección de datos personales" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="Políticas de protección de datos personales" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         {/* Aquí puedes poner el contenido de tu modal */}
       </Modal>
     </div>

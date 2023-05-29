@@ -21,6 +21,15 @@ const Contactanos = () => (
     >
       Nuestra oficina principal está ubicada en la ciudad de Bucaramanga...
     </Text>
+    {/* Aquí es donde insertaremos el mapa de Google */}
+    <iframe
+      title="Google Map"
+      src="https://www.google.com/maps/d/u/1/embed?mid=1yWXJNl7nw3gKrrIGIJz0_aSM0TX_9SY&ehbc=2E312F"
+      width="640"
+      height="480"
+      style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
+    />
+    {/* Resto de tu código... */}
     <Card
       style={{
         backgroundColor: '#ffffff',

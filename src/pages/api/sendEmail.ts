@@ -11,6 +11,8 @@ export default async function handler(req: NextApiRequest) {
   if (req.method === 'POST') {
     const {
       correo,
+      nombre,
+      cedula,
     } = req.body;
 
     const transporter = nodemailer.createTransport({
@@ -24,7 +26,7 @@ export default async function handler(req: NextApiRequest) {
     });
 
     // Generar el archivo PDF
-    const pdfDoc = pdf(MyDocument());
+    const pdfDoc = pdf(MyDocument(cedula, nombre));
     const pdfBuffer = await pdfDoc.toBuffer();
 
     const mailOptions = {
