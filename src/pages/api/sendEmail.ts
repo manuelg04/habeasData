@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest) {
     });
 
     // Generar el archivo PDF
-    const pdfDoc = pdf(MyDocument(cedula, nombre));
+    const pdfDoc = pdf(MyDocument({ cedula, nombre }));
     const pdfBuffer = await pdfDoc.toBuffer();
 
     const mailOptions = {

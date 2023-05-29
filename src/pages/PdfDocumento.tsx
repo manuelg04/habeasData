@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
 });
 // Create Document Component
-const MyDocument = (nombre, cedula) => (
+const MyDocument = ({ nombre, cedula }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.imageContainer}>
@@ -61,11 +61,11 @@ const MyDocument = (nombre, cedula) => (
         <Text style={styles.paragraph}>
           Yo,
           {' '}
-          {cedula}
+          {nombre}
           {' '}
           identificado(a) con cedula de ciudadanía No
           {' '}
-          {nombre}
+          {cedula}
           , autorizo a TRANSPORTES MTM S.A.S. para que realice la recolección de los datos personales que suministro de manera veraz y completa. TRANSPORTES MTM S.A.S. es responsable del tratamiento de datos personales que resultan indispensables para el ejercicio de su objeto social,
           en especial en lo referente a las actividades objeto social de la empresa, es así como recopila datos
           personales de conductores, propietarios, vehículos y terceros. Lo anterior impone la necesidad de
