@@ -29,18 +29,21 @@ export default function FormularioHabeasData() {
   const verificarUsuario = async (data) => {
     try {
       const response = await axios.get(`/api/verifyUsers?cedula=${data.cedula}`);
-      if (response.data !== null) {
+      // console.log('🚀 ~ response:', response);
+      if (response.data) {
         message.error('El usuario ya se encuentra registrado');
+        // console.log('verificando: entro por que era diferente de null');
         return true;
       }
+      // console.log('verificando: entro por defecto');
       return false;
     } catch (error) {
       // message.error('Error al comprobar el usuario');
-      return true;
     }
   };
 
   const crearUsuario = async (data) => {
+    // console.log('Ejecutando crear usuario');
     try {
       await axios.post('/api/saveUsers', data);
       message.success('Usuario creado correctamente');
@@ -51,16 +54,14 @@ export default function FormularioHabeasData() {
 
   const sendEmail = async (dataForm) => {
     try {
-      message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
-      form.resetFields();
+      // message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
       await axios.post('/api/sendEmail', dataForm);
     } catch (error) {
-      message.error('Hubo un error al enviar la información, por favor intente nuevamente');
+      // message.error('Hubo un error al enviar la información, por favor intente nuevamente');
     }
   };
 
   const VerificarData = async () => {
-    await crearUsuario(formValues);
     form.submit();
     setIsConfirmModalVisible(false); // Cerrar modal
   };
@@ -74,12 +75,16 @@ export default function FormularioHabeasData() {
     setIsConfirmModalVisible(true);
   };
   const onFinish = async (values: Usuario) => {
+    // console.log('Ejecutando OnFinish');
     const existe = await verificarUsuario(values);
+    // console.log('🚀 ~ existe:', existe);
     // Siempre enviar el correo
-    await sendEmail(values);
-    if (!existe) {
+    // console.log('Se envia el email ahora se va verificar si existe el usuario o no');
+    if (existe === false) {
+      // console.log('El usuario no existe por lo tanto se crea');
       await crearUsuario(values);
     }
+    await sendEmail(values);
 
     const data = {
       nombre: values.nombre,
@@ -91,7 +96,7 @@ export default function FormularioHabeasData() {
 
     setFormValues(data);
     setIsConfirmModalVisible(true);
-
+    // form.resetFields();
     // generatePdf(data);
   };
 
