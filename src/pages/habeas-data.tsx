@@ -38,7 +38,7 @@ export default function FormularioHabeasData() {
       // console.log('verificando: entro por defecto');
       return false;
     } catch (error) {
-      // message.error('Error al comprobar el usuario');
+      message.error('Error al comprobar el usuario');
     }
   };
 
@@ -54,10 +54,10 @@ export default function FormularioHabeasData() {
 
   const sendEmail = async (dataForm) => {
     try {
-      // message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
+      message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
       await axios.post('/api/sendEmail', dataForm);
     } catch (error) {
-      // message.error('Hubo un error al enviar la información, por favor intente nuevamente');
+      message.error('Hubo un error al enviar la información, por favor intente nuevamente');
     }
   };
 
