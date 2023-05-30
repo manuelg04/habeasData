@@ -60,7 +60,7 @@ export default function FormularioHabeasData() {
   };
 
   const VerificarData = async () => {
-    crearUsuario(formValues);
+    await crearUsuario(formValues);
     form.submit();
     setIsConfirmModalVisible(false); // Cerrar modal
   };
