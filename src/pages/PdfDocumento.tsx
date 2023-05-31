@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
 });
 // Create Document Component
-const MyDocument = ({ nombre, cedula }) => (
+const MyDocument = ({ nombre, cedula, fecha }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.imageContainer}>
@@ -159,6 +159,13 @@ const MyDocument = ({ nombre, cedula }) => (
           judiciales competentes; cumplir con las normas vigentes; presentar demandas y denuncias ante
           las autoridades competentes; ejercer el derecho de defensa en cualquier proceso administrativo
           y/o judicial.
+        </Text>
+        <Text style={styles.paragraph}>
+          {' '}
+          Este documento se susbrice
+          {' '}
+          {fecha}
+          {' '}
         </Text>
       </View>
     </Page>

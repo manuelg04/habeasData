@@ -1,9 +1,11 @@
+/* eslint-disable max-len */
 /* eslint-disable consistent-return */
 import {
-  Form, Input, Button, Typography, Checkbox, Modal, message, Card,
+  Form, Input, Button, Typography, Checkbox, Modal, message, Card, DatePicker,
 } from 'antd';
 import axios from 'axios';
 import { useState } from 'react';
+import dayjs from 'dayjs';
 import { Usuario } from '../tipos';
 
 const { Title } = Typography;
@@ -109,12 +111,22 @@ export default function FormularioHabeasData() {
       <Card style={{ width: '60%', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', borderRadius: '15px' }}>
         <Form
           name="basic"
-          initialValues={{ remember: true }}
+          initialValues={{ remember: true, fecha: dayjs() }}
           onFinish={onFinish}
           autoComplete="off"
           form={form}
           layout="vertical"
         >
+          <Form.Item
+            label="Fecha y Hora"
+            name="fecha"
+          >
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm:ss"
+              disabled
+            />
+          </Form.Item>
           <Form.Item
             label="Nombre completo"
             name="nombre"
@@ -197,7 +209,15 @@ export default function FormularioHabeasData() {
               ]}
             >
               <Checkbox>
-                Acepto las
+                Al dar click en este recuadro, usted autoriza a Transportes MTM para el tratamiento de sus datos personales de acuerdo con la Ley Estatutaria 1581 de 2012 de Habeas Data en Colombia. Mediante este consentimiento, reconozco y acepto que Transportes MTM recolecte, almacene, procese y utilice mis datos personales con el propósito específico de brindar servicios de transporte.
+
+                Entiendo que mis datos personales serán tratados de manera confidencial y segura, garantizando la privacidad y protección de mis derechos como titular de los datos. Asimismo, comprendo que tengo el derecho de acceder, rectificar, actualizar y suprimir mis datos personales, así como el derecho de oponerme al tratamiento de los mismos, de acuerdo con lo establecido en la Ley 1581 de 2012. Para ejercer estos derechos, podré contactar a Transportes MTM a través de los datos de contacto proporcionados en su política de habeas data.
+
+                Declaro que los datos proporcionados son veraces, completos y actualizados, y que he sido debidamente informado sobre los fines y el alcance del tratamiento de mis datos personales por parte de Transportes MTM. Acepto que cualquier cambio en mis datos personales deberá ser notificado de manera oportuna a la empresa.
+
+                En caso de tener alguna duda o inquietud acerca de la política de habeas data o del tratamiento de mis datos personales por parte de Transportes MTM, me comprometo a contactar a la empresa para obtener la información y aclaraciones necesarias.
+
+                Por tanto, al marcar este recuadro y continuar con el uso de los servicios de Transportes MTM, autorizo expresamente a la empresa para el tratamiento de mis datos personales de acuerdo con lo establecido en la Ley Estatutaria 1581 de 2012 de Habeas Data en Colombia y en la política de privacidad correspondiente.
                 {' '}
                 <Button type="text" onClick={showModal} style={{ color: 'blue' }}>políticas de protección de datos personales</Button>
               </Checkbox>
