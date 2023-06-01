@@ -50,7 +50,7 @@ export default function FormularioHabeasData() {
       await axios.post('/api/saveUsers', data);
       message.success('Usuario creado correctamente');
     } catch (error) {
-      // message.error('Error al crear el usuario');
+      message.error('Error al crear el usuario');
     }
   };
 
