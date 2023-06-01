@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable consistent-return */
 import {
-  Form, Input, Button, Typography, Checkbox, Modal, message, Card, DatePicker,
+  Form, Input, Button, Typography, Checkbox, Modal, message, Card, DatePicker, Row, Col,
 } from 'antd';
 import axios from 'axios';
 import { useState } from 'react';
@@ -104,11 +104,24 @@ export default function FormularioHabeasData() {
 
   return (
     <div style={{
-      display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f0f2f5',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      backgroundColor: '#f0f2f5',
+      padding: '1em',
     }}
     >
       <Title level={2} style={{ color: '#003a8c', marginBottom: '2em' }}>Formulario para el control Política Tratamiento de datos - Habeas Data</Title>
-      <Card style={{ width: '60%', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', borderRadius: '15px' }}>
+      <Card
+        style={{
+          width: '100%',
+          maxWidth: '600px',
+          boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+          borderRadius: '15px',
+        }}
+      >
         <Form
           name="basic"
           initialValues={{ remember: true, fecha: dayjs() }}
@@ -120,53 +133,66 @@ export default function FormularioHabeasData() {
           <Form.Item
             label="Fecha y Hora"
             name="fecha"
+            style={{ marginBottom: '3em' }}
           >
-            <DatePicker
-              showTime
-              format="YYYY-MM-DD HH:mm:ss"
-              disabled
-            />
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12}>
+                <DatePicker
+                  showTime
+                  format="YYYY-MM-DD HH:mm:ss"
+                  disabled
+                  style={{ width: '100%' }}
+                />
+              </Col>
+            </Row>
+
           </Form.Item>
           <Form.Item
             label="Nombre completo"
             name="nombre"
             rules={[{ required: true, message: 'Por favor ingresa tu nombre completo!' }]}
+            style={{ marginBottom: '5em' }}
           >
             <Input />
           </Form.Item>
-
-          <Form.Item
-            label="Cedula"
-            name="cedula"
-            rules={[{ required: true, message: 'Por favor ingresa tu número de cedula!' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Celular"
-            name="celular"
-            rules={[{ required: true, message: 'Por favor ingresa tu número de celular!' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Correo electrónico"
-            name="correo"
-            rules={[
-              {
-                type: 'email',
-                message: 'El correo electrónico no es válido!',
-              },
-              {
-                required: true,
-                message: 'Por favor ingresa tu correo electrónico!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+              <Form.Item
+                label="Cedula"
+                name="cedula"
+                rules={[{ required: true, message: 'Por favor ingresa tu número de cedula!' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+              <Form.Item
+                label="Celular"
+                name="celular"
+                rules={[{ required: true, message: 'Por favor ingresa tu número de celular!' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+              <Form.Item
+                label="Correo electrónico"
+                name="correo"
+                rules={[
+                  {
+                    type: 'email',
+                    message: 'El correo electrónico no es válido!',
+                  },
+                  {
+                    required: true,
+                    message: 'Por favor ingresa tu correo electrónico!',
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
           <Modal
             title="Confirmación de información"
             open={isConfirmModalVisible}
@@ -202,6 +228,7 @@ export default function FormularioHabeasData() {
             <Form.Item
               name="acepto"
               valuePropName="checked"
+              style={{ marginBottom: '1em' }}
               rules={[
                 {
                   validator: (_, value) => (value ? Promise.resolve() : Promise.reject(new Error('Debes aceptar las políticas de protección de datos personales'))),
@@ -222,30 +249,27 @@ export default function FormularioHabeasData() {
                 <Button type="text" onClick={showModal} style={{ color: 'blue' }}>políticas de protección de datos personales</Button>
               </Checkbox>
             </Form.Item>
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              block
+              onClick={() => {
+                form.validateFields()
+                  .then(() => {
+                    confirmarDatos();
+                    return null;
+                  }).catch(() => null);
+              }}
+              style={{ marginTop: '2em' }}
+            >
+              Confirmar
+            </Button>
 
-            <Form.Item>
-              <Button
-                type="primary"
-                block
-                onClick={() => {
-                  form.validateFields()
-                    .then(() => {
-                      confirmarDatos();
-                      return null;
-                    }).catch(() => null);
-                }}
-                style={{ marginTop: '2em' }}
-              >
-                Confirmar
-              </Button>
-
-            </Form.Item>
           </Form.Item>
         </Form>
       </Card>
-      <Modal title="Políticas de protección de datos personales" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        {/* Aquí puedes poner el contenido de tu modal */}
-      </Modal>
+      <Modal title="Políticas de protección de datos personales" open={isModalVisible} onOk={handleOk} onCancel={handleCancel} />
     </div>
   );
 }

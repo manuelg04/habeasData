@@ -3,11 +3,10 @@ import fs from 'fs';
 import path from 'path';
 
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  port: parseInt(process.env.DB_PORT, 10),
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+  host: process.env.TIDB_HOST,
+  user: process.env.TIDB_USER,
+  port: parseInt(process.env.TIDB_PORT, 10),
+  password: process.env.TIDB_PASSWORD,
   ssl: {
     ca: fs.readFileSync(path.join(process.cwd(), 'public/cacert.pem')),
   },
