@@ -40,7 +40,7 @@ export default function FormularioHabeasData() {
       // console.log('verificando: entro por defecto');
       return false;
     } catch (error) {
-      message.error('Error al comprobar el usuario');
+      // message.error('Error al comprobar el usuario');
     }
   };
 
