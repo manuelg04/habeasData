@@ -59,7 +59,7 @@ export default function FormularioHabeasData() {
       message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
       await axios.post('/api/sendEmail', dataForm);
     } catch (error) {
-      message.error('Hubo un error al enviar la información, por favor intente nuevamente');
+      // message.error('Hubo un error al enviar la información, por favor intente nuevamente');
     }
   };
 
