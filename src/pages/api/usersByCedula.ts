@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable import/prefer-default-export */
 import { RowDataPacket } from 'mysql2';
 import { Usuario } from '../../tipos';
@@ -11,7 +12,6 @@ export async function getUserByCedula(cedula: string): Promise<Usuario | null> {
     }
     return null;
   } catch (error) {
-    console.error(error); // this will print more details about the error
     throw error;
   }
 }
