@@ -9,7 +9,7 @@ export default async function GuardarUsuarios(req: NextApiRequest, res: NextApiR
 
     try {
       const result = await db.query(
-        'INSERT INTO infousuarios (nombres, cedula, celular, email, acepto, fecha) VALUES ($1, $2, $3, $4, $5, NOW())',
+        'INSERT INTO infousuarios (nombres, cedula, celular, email, acepto, fecha) VALUES (?, ?, ?, ?, ?, NOW())',
         [nombre, cedula, celular, correo, acepto],
       );
       res.status(200).json(result);

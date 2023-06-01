@@ -1,9 +1,14 @@
-import { Pool } from 'pg';
+import mysql from 'mysql2/promise';
+import fs from 'fs';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: parseInt(process.env.DB_PORT, 10),
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   ssl: {
-    rejectUnauthorized: false,
+    ca: fs.readFileSync('C:\\Users\\Manull\\Downloads\\cacert.pem'),
   },
 });
 
