@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   ssl: {
-    ca: fs.readFileSync('C:\\Users\\Manull\\Downloads\\cacert.pem'),
+    ca: fs.readFileSync(process.env.DB_SSL_CA as string),
   },
 });
 
