@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import fs from 'fs';
+import path from 'path';
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -8,7 +9,7 @@ const pool = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   ssl: {
-    ca: fs.readFileSync(process.env.DB_SSL_CA as string),
+    ca: fs.readFileSync(path.join(process.cwd(), 'public/cacert.pem')),
   },
 });
 
