@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { message } from 'antd';
 
 export default function Login() {
   const [usuario, setUsuario] = useState('');
@@ -21,7 +22,7 @@ export default function Login() {
       // Redirigir al usuario al panel de control
       router.push('/dashboard');
     } catch (error) {
-      console.log(error);
+      message.error('Usuario o contraseña incorrectos');
     }
   };
 
@@ -34,7 +35,7 @@ export default function Login() {
       // Redirige al usuario al inicio de sesión luego de registrarse
       setRegistering(false);
     } catch (error) {
-      console.log(error);
+      message.error('Error al registrar el usuario');
     }
   };
 

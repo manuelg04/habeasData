@@ -4,12 +4,11 @@ import db from '../../../db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { usuario, pass } = req.body;
-  console.log(req.body);
   try {
     // Verifica si el usuario ya existe
     const [existingUsers] = await db.query('SELECT * FROM usuarios WHERE usuario = ?', [usuario]);
 
-    if (existingUsers.length > 0) {
+    if (Array.isArray(existingUsers) && existingUsers.length > 0) {
       // Si el usuario ya existe, devuelve un error
       return res.status(400).json({ message: 'Usuario ya existe' });
     }
@@ -23,7 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(201).json({ message: 'Usuario creado exitosamente' });
   } catch (error) {
     // Manejo de errores
-    console.error('Ocurrió un error: ', error);
     return res.status(500).json({ message: 'Error del servidor' });
   }
 }

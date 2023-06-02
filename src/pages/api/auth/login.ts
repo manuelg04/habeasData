@@ -10,16 +10,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Consulta el usuario con el correo electrónico proporcionado
     const [results] = await db.query('SELECT * FROM usuarios WHERE usuario = ?', [usuario]);
 
-    if (results.length > 0) {
+    if (Array.isArray(results) && results.length > 0) {
       const user = results[0];
 
-      const passwordMatch = await bcrypt.compare(pass, user.pass);
+      if (typeof user === 'object' && 'pass' in user) {
+        const passwordMatch = await bcrypt.compare(pass, user.pass);
 
-      if (passwordMatch) {
-        // Codifica la información del usuario en el token JWT
-        const token = jwt.sign({ usuario }, 'secret', { expiresIn: '1h' });
+        if (passwordMatch) {
+          // Codifica la información del usuario en el token JWT
+          const token = jwt.sign({ usuario }, 'secret', { expiresIn: '1h' });
 
-        return res.status(200).json({ token });
+          return res.status(200).json({ token });
+        }
       }
     }
 
