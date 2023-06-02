@@ -58,6 +58,9 @@ const NavBar = () => {
       <Item key="/habeas-data">
         <Link href="/habeas-data">Habeas Data</Link>
       </Item>
+      <Item key="/login">
+        <Link href="/login">Iniciar Sesion</Link>
+      </Item>
     </Menu>
   );
 };

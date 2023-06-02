@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest) {
       bcc: 'habeasdata@transportesmtm.com',
       attachments: [
         { // Adjuntar el archivo PDF
-          filename: 'document.pdf',
+          filename: 'suhabeasdata.pdf',
           content: pdfBuffer,
         },
       ],

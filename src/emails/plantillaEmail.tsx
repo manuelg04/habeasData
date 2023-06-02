@@ -43,8 +43,9 @@ export default function PlantillaEmail() {
   // <Html>
     <Section style={main}>
       <Container style={container}>
-        <Text style={heading}>Cliente:</Text>
-        <h1>Buenas</h1>
+        <Text style={heading}>Estimado usurio:</Text>
+        <h1>No responda este correo</h1>
+        <p>Gracias por confiar en Transportes MTM.</p>
       </Container>
     </Section>
   // </Html>
