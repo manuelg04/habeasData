@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
@@ -11,7 +11,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post('/api/auth/login', { usuario, password });
 
       // Almacenar el token en las cookies/localStorage
       document.cookie = `token=${response.data.token}; path=/`;
@@ -25,7 +25,7 @@ export default function Login() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      <input type="text" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <button type="submit">Login</button>
     </form>

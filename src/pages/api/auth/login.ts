@@ -1,15 +1,33 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import db from '../../../db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { email, password } = req.body;
+  const { usuario, pass } = req.body;
+  console.log(req.body);
 
-  // Aquí estamos simulando la autenticación del usuario verificando las credenciales estáticas
-  if (email === 'superadmin@admin.com' && password === 'mtm123') {
-    // Estamos codificando la información del usuario en el token JWT
-    const token = jwt.sign({ email }, 'secret', { expiresIn: '1h' });
+  console.log('🚀 ~ pass:', pass);
+  try {
+    // Consulta el usuario con el correo electrónico proporcionado
+    const [results] = await db.query('SELECT * FROM usuarios WHERE usuario = ?', [usuario]);
+    console.log('🚀 ~ results:', results);
 
-    return res.status(200).json({ token });
+    if (results.length > 0) {
+      const user = results[0];
+
+      if (pass === user.pass) {
+        // Codifica la información del usuario en el token JWT
+        const token = jwt.sign({ usuario }, 'secret', { expiresIn: '1h' });
+
+        return res.status(200).json({ token });
+      }
+    }
+
+    return res.status(401).json({ message: 'Invalid credentials' });
+  } catch (error) {
+    // Handle error
+    console.error('An error occurred: ', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
-  return res.status(401).json({ message: 'Invalid credentials' });
 }
