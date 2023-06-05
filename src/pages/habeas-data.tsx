@@ -113,6 +113,15 @@ export default function FormularioHabeasData() {
       padding: '1em',
     }}
     >
+      <Typography.Text style={{ color: '#003a8c', fontSize: '20px', textAlign: 'center' }}>TRANSPORTES MTM</Typography.Text>
+      <Typography.Text style={{ color: '#003a8c', fontSize: '20px', textAlign: 'center' }}>SERVICIOS TERCERIZADOS S.A.S.</Typography.Text>
+      <Typography.Text style={{ color: '#003a8c', fontSize: '20px', textAlign: 'center' }}>Nit 900.773.684 - 9</Typography.Text>
+      <Typography.Text style={{
+        color: '#003a8c', fontSize: '16px', textAlign: 'center', marginBottom: '1em',
+      }}
+      >
+        Más información: servicioalclientemtm@transportesmtm.com
+      </Typography.Text>
       <Title level={2} style={{ color: '#003a8c', marginBottom: '2em' }}>Formulario para el control Política Tratamiento de datos - Habeas Data</Title>
       <Card
         style={{

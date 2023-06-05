@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const hashedPassword = await bcrypt.hash(pass, 10);
 
     // Ahora inserta el usuario con la contraseña cifrada en la base de datos
-    await db.query('INSERT INTO usuarios (usuario, pass) VALUES (?, ?)', [usuario, hashedPassword]);
+    await db.query('INSERT INTO usuarios (usuario, pass, role) VALUES (?, ?, ?)', [usuario, hashedPassword, 'normaluser']);
 
     return res.status(201).json({ message: 'Usuario creado exitosamente' });
   } catch (error) {

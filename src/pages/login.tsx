@@ -2,7 +2,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { message } from 'antd';
+import {
+  message, Form, Input, Button, Card,
+} from 'antd';
 
 export default function Login() {
   const [usuario, setUsuario] = useState('');
@@ -10,9 +12,7 @@ export default function Login() {
   const [registering, setRegistering] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     try {
       const response = await axios.post('/api/auth/login', { usuario, pass });
 
@@ -26,9 +26,7 @@ export default function Login() {
     }
   };
 
-  const handleSubmitRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmitRegister = async () => {
     try {
       await axios.post('/api/auth/register', { usuario, pass });
 
@@ -41,22 +39,34 @@ export default function Login() {
 
   return (
     <>
-      {!registering ? (
-      // Mostrar el formulario de inicio de sesión si el usuario no está registrándose
-        <form onSubmit={handleSubmit}>
-          <input type="text" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
-          <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} required />
-          <button type="submit">Login</button>
-          <button type="button" onClick={() => setRegistering(true)}>Registrar</button>
-        </form>
-      ) : (
-      // Mostrar el formulario de registro si el usuario está registrándose
-        <form onSubmit={handleSubmitRegister}>
-          <input type="text" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
-          <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} required />
-          <button type="submit">Registrarme</button>
-        </form>
-      )}
+      <Card style={{ width: 300, margin: 'auto', marginTop: 50 }}>
+        {!registering ? (
+          <Form onFinish={handleSubmit}>
+            <Form.Item>
+              <Input type="text" placeholder="Usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
+            </Form.Item>
+            <Form.Item>
+              <Input.Password type="password" placeholder="Contraseña" value={pass} onChange={(e) => setPass(e.target.value)} required />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" style={{ marginRight: 10 }}>Iniciar sesión</Button>
+              <Button type="link" onClick={() => setRegistering(true)}>Registrar</Button>
+            </Form.Item>
+          </Form>
+        ) : (
+          <Form onFinish={handleSubmitRegister}>
+            <Form.Item>
+              <Input type="text" placeholder="Usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
+            </Form.Item>
+            <Form.Item>
+              <Input.Password type="password" placeholder="Contraseña" value={pass} onChange={(e) => setPass(e.target.value)} required />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">Registrarme</Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Card>
     </>
   );
 }
