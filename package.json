@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
     "@react-email/container": "^0.0.8",
     "@react-email/html": "^0.0.4",
     "@react-email/render": "^0.0.7",
@@ -37,7 +39,8 @@
     "pg": "^8.11.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-email": "^1.9.3"
+    "react-email": "^1.9.3",
+    "swiper": "^9.3.2"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.21",
