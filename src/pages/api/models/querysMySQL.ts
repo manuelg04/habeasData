@@ -1,4 +1,4 @@
-import db from '../../db';
+import db from '../../../db';
 
 async function fetchUserData() {
   const [rows] = await db.query('SELECT nombres, cedula, celular, email, acepto FROM infousuarios');

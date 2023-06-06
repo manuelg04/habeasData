@@ -18,7 +18,8 @@ const Dashboard = () => {
   const handleSearch = async (value) => {
     try {
       // Llama a tu API para buscar al usuario por nombre
-      const response = await axios.get(`/api/findInternUsers?usuario=${value}`);
+      const response = await axios.get(`/api/findInternUsers?id=${value}`);
+      console.log(response.data);
 
       if (response.data) {
         setSelectedUser(response.data);

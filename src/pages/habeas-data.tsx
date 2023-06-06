@@ -30,7 +30,7 @@ export default function FormularioHabeasData() {
 
   const verificarUsuario = async (data) => {
     try {
-      const response = await axios.get(`/api/verifyUsers?cedula=${data.cedula}`);
+      const response = await axios.get(`/api/controllers/verifyUsers?cedula=${data.cedula}`);
       // console.log('🚀 ~ response:', response);
       if (response.data) {
         message.error('El usuario ya se encuentra registrado');
@@ -47,7 +47,7 @@ export default function FormularioHabeasData() {
   const crearUsuario = async (data) => {
     // console.log('Ejecutando crear usuario');
     try {
-      await axios.post('/api/saveUsers', data);
+      await axios.post('/api/models/saveUsers', data);
       message.success('Usuario creado correctamente');
     } catch (error) {
       message.error('Error al crear el usuario');
@@ -57,7 +57,7 @@ export default function FormularioHabeasData() {
   const sendEmail = async (dataForm) => {
     try {
       message.success('Su información ha sido enviada, gracias por confiar en transportes mtm');
-      await axios.post('/api/sendEmail', dataForm);
+      await axios.post('/api/helpers/sendEmail', dataForm);
     } catch (error) {
       message.error('Hubo un error al enviar la información, por favor intente nuevamente');
     }

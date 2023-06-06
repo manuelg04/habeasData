@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
 /* eslint-disable import/prefer-default-export */
 import { RowDataPacket } from 'mysql2';
-import { Usuario } from '../../tipos';
-import db from '../../db';
+import { Usuario } from '../../../tipos';
+import db from '../../../db';
 
 export async function getUserByCedula(cedula: string): Promise<Usuario | null> {
   try {

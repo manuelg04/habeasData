@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import db from '../../db';
+import db from '../../../db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { usuario } = req.query; // Asume que el nombre se pasa como un parámetro de consulta
+  const { id } = req.query; // Asume que el nombre se pasa como un parámetro de consulta
 
   try {
     // Busca al usuario por nombre
-    const [users] = await db.query('SELECT * FROM usuarios WHERE usuario = ?', [usuario]);
+    const [users] = await db.query('SELECT * FROM usuarios WHERE id = ?', [id]);
 
     if (Array.isArray(users) && users.length > 0) {
       // Si el usuario existe, devuelve los datos del usuario

@@ -4,8 +4,8 @@ import { render } from '@react-email/render';
 import type { NextApiRequest } from 'next';
 import nodemailer from 'nodemailer';
 import { pdf } from '@react-pdf/renderer';
-import PlantillaEmail from '../../emails/plantillaEmail';
-import MyDocument from '../PdfDocumento';
+import PlantillaEmail from '../../../components/emails/plantillaEmail';
+import MyDocument from '../../../components/PdfDocumento';
 
 export default async function handler(req: NextApiRequest) {
   if (req.method === 'POST') {

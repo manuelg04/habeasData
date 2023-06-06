@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import db from '../../db';
+import db from '../../../db';
 
 export default async function GuardarUsuarios(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {

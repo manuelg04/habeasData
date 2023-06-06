@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
-import db from '../../../db';
+import db from '../../../../db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { usuario, pass } = req.body;

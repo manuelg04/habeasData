@@ -14,7 +14,7 @@ export default function Login() {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('/api/auth/login', { usuario, pass });
+      const response = await axios.post('/api/middlewares/auth/login', { usuario, pass });
 
       // Almacenar el token en las cookies/localStorage
       document.cookie = `token=${response.data.token}; path=/`;
@@ -28,7 +28,7 @@ export default function Login() {
 
   const handleSubmitRegister = async () => {
     try {
-      await axios.post('/api/auth/register', { usuario, pass });
+      await axios.post('/api/middlewares/auth/register', { usuario, pass });
 
       // Redirige al usuario al inicio de sesión luego de registrarse
       setRegistering(false);
