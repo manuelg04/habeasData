@@ -43,26 +43,66 @@ export default function Login() {
         {!registering ? (
           <Form onFinish={handleSubmit}>
             <Form.Item>
-              <Input type="text" placeholder="Usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
+              <Input
+                type="text"
+                placeholder="Usuario"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                required
+              />
             </Form.Item>
             <Form.Item>
-              <Input.Password type="password" placeholder="Contraseña" value={pass} onChange={(e) => setPass(e.target.value)} required />
+              <Input.Password
+                type="password"
+                placeholder="Contraseña"
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                required
+              />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" style={{ marginRight: 10 }}>Iniciar sesión</Button>
-              <Button type="link" onClick={() => setRegistering(true)}>Registrar</Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{
+                  marginRight: 10,
+                  backgroundColor: '#1890ff', // o el color que desees para el fondo
+                  borderColor: '#1890ff', // o el color que desees para el borde
+                  color: '#fff',
+
+                }}
+              >
+                Iniciar sesión
+              </Button>
+              <Button type="link" onClick={() => setRegistering(true)}>
+                Registrar
+              </Button>
             </Form.Item>
           </Form>
         ) : (
           <Form onFinish={handleSubmitRegister}>
             <Form.Item>
-              <Input type="text" placeholder="Usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
+              <Input
+                type="text"
+                placeholder="Usuario"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                required
+              />
             </Form.Item>
             <Form.Item>
-              <Input.Password type="password" placeholder="Contraseña" value={pass} onChange={(e) => setPass(e.target.value)} required />
+              <Input.Password
+                type="password"
+                placeholder="Contraseña"
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                required
+              />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">Registrarme</Button>
+              <Button type="primary" htmlType="submit">
+                Registrarme
+              </Button>
             </Form.Item>
           </Form>
         )}

@@ -265,7 +265,12 @@ export default function FormularioHabeasData() {
                     return null;
                   }).catch(() => null);
               }}
-              style={{ marginTop: '2em' }}
+              style={{
+                marginTop: '2em',
+                backgroundColor: '#1890ff', // o el color que desees para el fondo
+                borderColor: '#1890ff', // o el color que desees para el borde
+                color: '#fff',
+              }}
             >
               Confirmar
             </Button>
