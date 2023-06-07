@@ -15,8 +15,6 @@ export default function Login() {
   const handleSubmit = async () => {
     try {
       const response = await axios.post('/api/middlewares/auth/login', { usuario, pass });
-      console.log("🚀 ~ response:", response.data);
-      
 
       // Almacenar el token en las cookies/localStorage
       document.cookie = `token=${response.data.token}; path=/`;
