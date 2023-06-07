@@ -3,6 +3,7 @@
 import {
   Typography, Card, Form, Input, Button, Row, Col, Image, Space,
 } from 'antd';
+import { WhatsAppOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
@@ -22,13 +23,7 @@ const Contactanos = () => (
       Nuestra oficina principal está ubicada en la ciudad de Bucaramanga...
     </Text>
     {/* Aquí es donde insertaremos el mapa de Google */}
-    <iframe
-      title="Google Map"
-      src="https://www.google.com/maps/d/u/1/embed?mid=1yWXJNl7nw3gKrrIGIJz0_aSM0TX_9SY&ehbc=2E312F"
-      width="640"
-      height="480"
-      style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
-    />
+
     {/* Resto de tu código... */}
     <Card
       style={{
@@ -40,30 +35,137 @@ const Contactanos = () => (
       }}
     >
       <Row justify="space-around" align="middle">
-        <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
           {/* Card para David */}
           <Space direction="vertical">
             <Image
               width={200}
-              src="/corporativo.jpg" // Aquí va la URL de la imagen de David
+              src="/fredy.jpeg" // Aquí va la URL de la imagen de David
               alt="David, nuestro abogado"
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
-            <Title level={3}>David</Title>
-            <Text>¡Nuestro Abogado!</Text>
+            <Title level={3}>Freddy Cordero</Title>
+            <Text>Director comercial Zona Bogotá </Text>
+            <Button type="primary" icon={<WhatsAppOutlined />} href="https://wa.me/573173666370" target="_blank">
+              Contáctame!
+            </Button>
           </Space>
         </Col>
-        <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
           {/* Card para Juan */}
           <Space direction="vertical">
             <Image
               width={200}
-              src="/messi.jpg" // Aquí va la URL de la imagen de Juan
+              src="/camimontoya.jpeg" // Aquí va la URL de la imagen de Juan
               alt="Juan, nuestro arquitecto"
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
-            <Title level={3}>Juan</Title>
-            <Text>¡Nuestro Arquitecto!</Text>
+            <Title level={3}>Maria Camila Montoya</Title>
+            <Text> Directora comercial zona Valle del cauca, Buenaventura, Pasto, Popayan</Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/jairoliza.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Jairo Lizarazo</Title>
+            <Text>Director comercial Zona costa y centro del pais </Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/rosellon.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Sergio Rosellon </Title>
+            <Text>Director comercial zona Cartagena, Barranquilla, Santa Marta y Santander </Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/hernando.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Hernando Quintero</Title>
+            <Text>Director comercial zona Cucuta Norte de Santander  </Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/luisa.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Luisa Fernanda Quintero</Title>
+            <Text>Directora comercial zona Huila, Ibague, Manizales y Pereira </Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/julian.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Julian Hernandez</Title>
+            <Text>Director comercial zona magdalena medio y apoyo nacional </Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/manuelsuarez.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Manuel Suarez</Title>
+            <Text>Director comercial zona Bucaramanga </Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/carolina.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Carolina Cortes</Title>
+            <Text>Director comercial Zona Bogotá 2 </Text>
+          </Space>
+        </Col>
+        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          {/* Card para David */}
+          <Space direction="vertical">
+            <Image
+              width={200}
+              src="/yeni.jpeg" // Aquí va la URL de la imagen de David
+              alt="David, nuestro abogado"
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+            />
+            <Title level={3}>Yenifer Balza</Title>
+            <Text>Director comercial zona Cordoba, Guajira </Text>
           </Space>
         </Col>
       </Row>

@@ -19,8 +19,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (passwordMatch) {
           // Codifica la información del usuario en el token JWT
           const token = jwt.sign({ usuario }, 'secret', { expiresIn: '1h' });
+          const { id, role } = user;
 
-          return res.status(200).json({ token });
+          return res.status(200).json({
+            token, id, usuario, role,
+          });
         }
       }
     }
