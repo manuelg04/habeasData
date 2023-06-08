@@ -10,6 +10,8 @@ const NavBar = () => {
   const router = useRouter();
   const [selectedKey, setSelectedKey] = useState<string>('');
 
+  console.log("Buenos dias")
+
   useEffect(() => {
     setSelectedKey(router.pathname);
   }, [router.pathname]);
