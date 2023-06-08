@@ -2,21 +2,36 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   message, Form, Input, Button, Card,
 } from 'antd';
+import {
+  setUser,
+} from '../redux/userSlice';
+import { selectUser } from '../redux/selector';
 
 export default function Login() {
-  const [usuario, setUsuario] = useState('');
+  const [infouser, setInfoUser] = useState('');
   const [pass, setPass] = useState('');
   const [registering, setRegistering] = useState(false);
   const router = useRouter();
+  const state = useSelector(selectUser);
+  console.log('State', state);
+  const dispatch = useDispatch(); // obtén dispatch
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('/api/middlewares/auth/login', { usuario, pass });
-      console.log("🚀 ~ response:", response.data);
-      
+      const response = await axios.post('/api/middlewares/auth/login', { usuario: infouser, pass });
+      console.log('🚀 ~ response:', response.data);
+
+      // TODO: Hacer esto en una sola linea de codigo
+      const {
+        id, usuario, role, token,
+      } = response.data;
+      dispatch(setUser({
+        id, usuario, role, token,
+      }));
 
       // Almacenar el token en las cookies/localStorage
       document.cookie = `token=${response.data.token}; path=/`;
@@ -30,7 +45,7 @@ export default function Login() {
 
   const handleSubmitRegister = async () => {
     try {
-      await axios.post('/api/middlewares/auth/register', { usuario, pass });
+      await axios.post('/api/middlewares/auth/register', { usuario: infouser, pass });
 
       // Redirige al usuario al inicio de sesión luego de registrarse
       setRegistering(false);
@@ -48,8 +63,8 @@ export default function Login() {
               <Input
                 type="text"
                 placeholder="Usuario"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
+                value={infouser}
+                onChange={(e) => setInfoUser(e.target.value)}
                 required
               />
             </Form.Item>
@@ -87,8 +102,8 @@ export default function Login() {
               <Input
                 type="text"
                 placeholder="Usuario"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
+                value={infouser}
+                onChange={(e) => setInfoUser(e.target.value)}
                 required
               />
             </Form.Item>
