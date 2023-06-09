@@ -17,8 +17,9 @@ export default function Login() {
   const [registering, setRegistering] = useState(false);
   const router = useRouter();
   const state = useSelector(selectUser);
-  console.log('State', state);
   const dispatch = useDispatch(); // obtén dispatch
+
+  console.log('🚀 ~ currentUser: Login', state);
 
   const handleSubmit = async () => {
     try {

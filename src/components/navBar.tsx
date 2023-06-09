@@ -1,20 +1,37 @@
 // NavBar.tsx
-import { Menu } from 'antd';
+import { Button, Menu } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser } from '../redux/selector';
+import { setUser } from '../redux/userSlice';
 
 const { Item, SubMenu } = Menu;
 
 const NavBar = () => {
   const router = useRouter();
   const [selectedKey, setSelectedKey] = useState<string>('');
-
-  console.log("Buenos dias")
-
+  const dispatch = useDispatch();
   useEffect(() => {
     setSelectedKey(router.pathname);
   }, [router.pathname]);
+
+  const user = useSelector(selectUser);
+  const isLoggedIn = Boolean(user.token);
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post('/api/middlewares/auth/logout');
+      console.log('🚀 ~ response:', response);
+      dispatch(setUser({
+        id: '', usuario: '', role: '', token: '',
+      }));
+      router.push('/login');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Menu
@@ -61,7 +78,9 @@ const NavBar = () => {
         <Link href="/habeas-data">Habeas Data</Link>
       </Item>
       <Item key="/login">
-        <Link href="/login">Iniciar Sesion</Link>
+        {isLoggedIn
+          ? <a onClick={handleLogout} style={{ cursor: 'pointer' }}>Cerrar Sesion</a>
+          : <Link href="/login">Iniciar Sesion</Link>}
       </Item>
     </Menu>
   );

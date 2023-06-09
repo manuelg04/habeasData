@@ -6,6 +6,8 @@ import {
 import { KeyOutlined, FileSearchOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../redux/selector';
 
 const { Sider } = Layout;
 const { Search } = Input;
@@ -14,6 +16,9 @@ const Dashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [activeKey, setActiveKey] = useState('1'); // nuevo estado
   const [form, setForm] = useState({ Documento: '', Placa: '', Manifiesto: '' }); // Nuevo estado para el formulario
+  const currentUser = useSelector(selectUser);
+  const isAdmin = currentUser.role === 'admin';
+  console.log('🚀 ~ currentUser:', currentUser);
 
   const handleSearch = async (value) => {
     try {
@@ -55,16 +60,23 @@ const Dashboard = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider>
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onSelect={({ key }) => setActiveKey(key)}>
-          <Menu.Item key="1" icon={<KeyOutlined />}>
-            Generar contraseña
-          </Menu.Item>
+          {isAdmin && (
+            <Menu.Item key="1" icon={<KeyOutlined />}>
+              Generar contraseña
+            </Menu.Item>
+          )}
           <Menu.Item key="2" icon={<FileSearchOutlined />}>
             Consulte Estado de Cuenta
           </Menu.Item>
         </Menu>
       </Sider>
-      {activeKey === '1' && (
+      {isAdmin && activeKey === '1' && (
         <div>
+          <Typography.Title>
+            Bienvenido,
+            {' '}
+            {currentUser.usuario}
+          </Typography.Title>
           <Search placeholder="Buscar por nombre" onSearch={handleSearch} style={{ width: 200, margin: '15px 0' }} />
           {selectedUser && (
           <Button onClick={handlePasswordGeneration}>
