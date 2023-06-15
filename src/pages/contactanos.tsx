@@ -87,7 +87,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Sergio Rosellon </Title>
-            <Text>Director comercial zona Cartagena, Barranquilla, Santa Marta y Santander </Text>
+            <Text>Director de zona Cartagena, Barranquilla, Santa Marta y Santander </Text>
           </Space>
         </Col>
         <Col xs={24} sm={24} md={6} lg={6} xl={6}>
@@ -100,7 +100,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Hernando Quintero</Title>
-            <Text>Director comercial zona Cucuta Norte de Santander  </Text>
+            <Text>Director de zona Cucuta Norte de Santander  </Text>
           </Space>
         </Col>
         <Col xs={24} sm={24} md={6} lg={6} xl={6}>
@@ -113,7 +113,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Luisa Fernanda Quintero</Title>
-            <Text>Directora comercial zona Huila, Ibague, Manizales y Pereira </Text>
+            <Text>Directora de zona Huila, Ibague, Manizales y Pereira </Text>
           </Space>
         </Col>
         <Col xs={24} sm={24} md={6} lg={6} xl={6}>
@@ -126,7 +126,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Julian Hernandez</Title>
-            <Text>Director comercial zona magdalena medio y apoyo nacional </Text>
+            <Text>Director de zona magdalena medio y apoyo nacional </Text>
           </Space>
         </Col>
         <Col xs={24} sm={24} md={6} lg={6} xl={6}>
@@ -139,7 +139,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Manuel Suarez</Title>
-            <Text>Director comercial zona Bucaramanga </Text>
+            <Text>Director de zona Bucaramanga </Text>
           </Space>
         </Col>
         <Col xs={24} sm={24} md={6} lg={6} xl={6}>
@@ -152,7 +152,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Carolina Cortes</Title>
-            <Text>Director comercial Zona Bogotá 2 </Text>
+            <Text>Director de Zona Bogotá 2 </Text>
           </Space>
         </Col>
         <Col xs={24} sm={24} md={6} lg={6} xl={6}>
@@ -165,7 +165,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Yenifer Balza</Title>
-            <Text>Director comercial zona Cordoba, Guajira </Text>
+            <Text>Director de zona Cordoba, Guajira </Text>
           </Space>
         </Col>
       </Row>
