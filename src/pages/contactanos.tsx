@@ -61,7 +61,7 @@ const Contactanos = () => (
               style={{ objectFit: 'cover', borderRadius: '50%' }}
             />
             <Title level={3}>Maria Camila Montoya</Title>
-            <Text> Directora comercial zona Valle del cauca, Buenaventura, Pasto, Popayan</Text>
+            <Text> Directora de zona Valle del cauca, Buenaventura, Pasto, Popayan</Text>
           </Space>
         </Col>
         <Col xs={24} sm={24} md={6} lg={6} xl={6}>
