@@ -1,5 +1,6 @@
 import { verify } from 'jsonwebtoken';
 import { serialize } from 'cookie';
+import { MY_TOKEN_NAME } from '../../../../constantes';
 
 export default function logout(req, res) {
   const { token } = req.cookies;
@@ -8,7 +9,7 @@ export default function logout(req, res) {
     return res.status(401).json({ message: 'Invalid token' });
   }
 
-  const serialized = serialize('token', null, {
+  const serialized = serialize(MY_TOKEN_NAME, null, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',

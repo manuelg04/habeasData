@@ -2,29 +2,24 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   message, Form, Input, Button, Card,
 } from 'antd';
 import {
   setUser,
 } from '../redux/userSlice';
-import { selectUser } from '../redux/selector';
 
 export default function Login() {
   const [infouser, setInfoUser] = useState('');
   const [pass, setPass] = useState('');
   const [registering, setRegistering] = useState(false);
   const router = useRouter();
-  const state = useSelector(selectUser);
   const dispatch = useDispatch(); // obtén dispatch
-
-  console.log('🚀 ~ currentUser: Login', state);
 
   const handleSubmit = async () => {
     try {
       const response = await axios.post('/api/middlewares/auth/login', { usuario: infouser, pass });
-      console.log('🚀 ~ response:', response.data);
 
       // TODO: Hacer esto en una sola linea de codigo
       const {
