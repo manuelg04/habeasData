@@ -1,13 +1,14 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable max-len */
 import {
-  Layout, Menu, Input, Button, message, Alert, Form, Typography, Upload,
+  Layout, Menu, Input, Button, message, Alert, Form, Typography, Table,
 } from 'antd';
 import { KeyOutlined, FileSearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/selector';
+import { addDocument, getDocumentsByField, uploadFile } from './api/controllers/firebase';
 
 const { Sider } = Layout;
 const { Search } = Input;
@@ -16,6 +17,8 @@ const Dashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [activeKey, setActiveKey] = useState('1'); // nuevo estado
   const [form, setForm] = useState({ Documento: '', Placa: '', Manifiesto: '' }); // Nuevo estado para el formulario
+  const [file, setFile] = useState(null);
+  const [excelData, setExcelData] = useState([]);
   const currentUser = useSelector(selectUser);
   const isAdmin = currentUser.role === 'admin';
 
@@ -47,8 +50,18 @@ const Dashboard = () => {
     generatePassword(16);
   }, []);
 
-  const handleFormSubmit = () => {
-    // Aquí puedes llamar a tu API para buscar el estado de cuenta con la información del formulario
+  const handleFormSubmit = async () => {
+    // Se realiza la búsqueda en firebase en función de los campos que no están vacíos
+    if (form.Documento !== '') {
+      const result = await getDocumentsByField('prueba', 'DOCUMENTO', form.Documento);
+      setExcelData(result);
+    } else if (form.Placa !== '') {
+      const result = await getDocumentsByField('prueba', 'PLACA', form.Placa);
+      setExcelData(result);
+    } else if (form.Manifiesto !== '') {
+      const result = await getDocumentsByField('prueba', 'MFTO', form.Manifiesto);
+      setExcelData(result);
+    }
   };
 
   const handleFormChange = (e) => {
@@ -57,32 +70,74 @@ const Dashboard = () => {
   const handlePasswordGeneration = () => {
     const password = generatePassword(10);
     message.success(`La nueva contraseña es: ${password}`);
-    // Aquí debes llamar a tu API o función para cambiar la contraseña del usuario
   };
-  const handleFileUpload = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    console.log(file);
 
+  const getExcelData = async (url) => {
     try {
-      const response = await axios.post('/api/controllers/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 200) {
-        message.success('Archivo subido exitosamente');
-      } else {
-        throw new Error('Algo salió mal al subir el archivo');
-      }
-    } catch (err) {
-      message.error(err.message);
+      const response = await axios.get(`/api/controllers/getExcelData?url=${url}`);
+      setExcelData(response.data);
+    } catch (error) {
+      message.error('Error al obtener los datos del archivo');
     }
-
-    // Debemos siempre retornar false para prevenir el comportamiento por defecto de antd Upload.
-    return false;
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await uploadFile(file);
+      const data = await getExcelData(result);
+      await addDocument('prueba', { data }); // asumiendo 'excelData' como el nombre de la colección
+    } catch (error) {
+      message.error('Error al cargar el archivo');
+    }
+  };
+
+  const columns = [
+    {
+      title: 'MFTO',
+      dataIndex: 'MFTO',
+    },
+    {
+      title: 'PLACA',
+      dataIndex: ' PLACA ',
+    },
+    {
+      title: 'PROPIETARIO',
+      dataIndex: ' PROPIETARIO ',
+    },
+    {
+      title: 'DOCUMENTO',
+      dataIndex: 'DOCUMENTO',
+    },
+    {
+      title: 'FLETE PAGADO',
+      dataIndex: 'FLETE PAGADO',
+    },
+    {
+      title: 'ANTICIPOS',
+      dataIndex: 'ANTICIPOS',
+    },
+    {
+      title: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
+      dataIndex: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
+    },
+    {
+      title: 'POLIZA / ESTAMPILLA',
+      dataIndex: 'POLIZA / ESTAMPILLA',
+    },
+    {
+      title: 'FALTANTE / O DAÑO EN LA MERCANCIA',
+      dataIndex: 'FALTANTE / O DAÑO EN LA MERCANCIA',
+    },
+    {
+      title: 'VR. SALDO CANCELAR',
+      dataIndex: ' VR. SALDO CANCELAR ',
+    },
+    {
+      title: 'FECHA CONSIGNACION SALDO',
+      dataIndex: 'FECHA CONSIGNACION SALDO',
+    },
+  ];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -123,11 +178,10 @@ const Dashboard = () => {
       )}
       {isAdmin && activeKey === '3' && (
         <div style={{ padding: '15px' }}>
-          <Typography.Title>Cargar archivo Excel</Typography.Title>
-          <Alert message="Atención: aquí suba su archivo de Excel." type="info" showIcon />
-          <Upload.Dragger name="file" beforeUpload={handleFileUpload} accept=".xlsx">
-            <p>Click o arrastra el archivo para subirlo</p>
-          </Upload.Dragger>
+          <form onSubmit={handleSubmit}>
+            <input type="file" name="" id="" onChange={(e) => setFile(e.target.files[0])} />
+            <button type="submit">Upload</button>
+          </form>
         </div>
       )}
       {activeKey === '2' && (
@@ -140,15 +194,13 @@ const Dashboard = () => {
             <Input name="Documento" placeholder="Documento" value={form.Documento} onChange={handleFormChange} />
           </Form.Item>
           <Form.Item>
-            <Input name="Placa" placeholder="Placa" value={form.Placa} onChange={handleFormChange} />
-          </Form.Item>
-          <Form.Item>
             <Input name="Manifiesto" placeholder="No Manifiesto" value={form.Manifiesto} onChange={handleFormChange} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" onClick={handleFormSubmit}>Buscar</Button>
           </Form.Item>
         </Form>
+        <Table dataSource={excelData} columns={columns} />
       </div>
       )}
       {/* Aquí se pueden agregar más componentes que se muestren con base en activeKey */}

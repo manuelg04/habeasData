@@ -1,4 +1,4 @@
-import { verify } from 'jsonwebtoken';
+/* eslint-disable consistent-return */
 import { serialize } from 'cookie';
 import { MY_TOKEN_NAME } from '../../../../constantes';
 

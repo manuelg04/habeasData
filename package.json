@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
+    "@firebase/firestore": "^3.12.2",
     "@headlessui/react": "^1.7.15",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
@@ -22,6 +23,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@types/node-jose": "^1.1.10",
     "antd": "^5.5.0",
+    "aws-sdk": "^2.1397.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
@@ -29,6 +31,7 @@
     "dayjs": "^1.11.7",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
+    "firebase": "^9.22.2",
     "formidable": "^2.1.1",
     "html2canvas": "^1.4.1",
     "jose": "^4.8.3",
@@ -48,7 +51,9 @@
     "react-email": "^1.9.3",
     "react-redux": "^8.0.7",
     "redux-persist": "^6.0.0",
-    "swiper": "^9.3.2"
+    "swiper": "^9.3.2",
+    "uuid": "^9.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.21",
