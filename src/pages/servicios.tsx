@@ -19,7 +19,9 @@ const Servicios = () => (
       lineHeight: '1.5',
     }}
     >
-      Contamos con personal idóneo, capacitado y con toda la experiencia necesaria que se requiere...
+      Contamos con personal idóneo, capacitado y con toda la experiencia necesaria que se requiere para prestar el servicio público de transporte terrestre de carga a nivel nacional,  lo que contribuye al desarrollo tanto regional como nacional. Nos apoyamos en las últimas innovaciones tecnológicas para la capacitación constante y el aprendizaje de nuestro equipo.
+
+      En MTM tenemos servicios idóneos para atender las necesidades de tu empresa. Podemos ofrecer soluciones en:
     </Paragraph>
 
     <Row gutter={[16, 16]} style={{ marginTop: '2em' }}>
@@ -37,7 +39,7 @@ const Servicios = () => (
             lineHeight: '1.5',
           }}
           >
-            Transporte especializado en Camabajas, carga extradimensionada...
+            Transporte especializado en Camabajas, carga extradimensionada, carga extrapesada y transporte de maquinaria. Con experiencia y el total cumplimiento de las leyes que nos rigen.
           </Paragraph>
         </Card>
       </Col>
@@ -56,7 +58,7 @@ const Servicios = () => (
             lineHeight: '1.5',
           }}
           >
-            Transporte de carga seca, en sus diferentes formas...
+            Transporte de carga seca, en sus diferentes formas  y con el cuidado necesario sin importar la delicadeza de esta.
           </Paragraph>
         </Card>
       </Col>

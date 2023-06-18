@@ -177,10 +177,16 @@ const Dashboard = () => {
         </div>
       )}
       {isAdmin && activeKey === '3' && (
-        <div style={{ padding: '15px' }}>
-          <form onSubmit={handleSubmit}>
-            <input type="file" name="" id="" onChange={(e) => setFile(e.target.files[0])} />
-            <button type="submit">Upload</button>
+        <div className="p-4">
+          <form onSubmit={handleSubmit} className="flex items-center justify-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div className="mb-4">
+              <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="file" onChange={(e) => setFile(e.target.files[0])} />
+            </div>
+            <div className="mb-6">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                Upload
+              </button>
+            </div>
           </form>
         </div>
       )}
@@ -197,7 +203,7 @@ const Dashboard = () => {
             <Input name="Manifiesto" placeholder="No Manifiesto" value={form.Manifiesto} onChange={handleFormChange} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" onClick={handleFormSubmit}>Buscar</Button>
+            <Button type="primary" onClick={handleFormSubmit} style={{ backgroundColor: 'blue' }}>Buscar</Button>
           </Form.Item>
         </Form>
         <Table dataSource={excelData} columns={columns} />

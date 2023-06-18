@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 // NavBar.tsx
@@ -80,7 +81,7 @@ const NavBar = () => {
       </Item>
       <Item key="/login">
         {isLoggedIn
-          ? <Link href="/dashboard" onClick={handleLogout} style={{ cursor: 'pointer' }}>Cerrar Sesion</Link>
+          ? <a style={{ cursor: 'pointer' }} onClick={handleLogout}>Cerrar Sesion</a>
           : <Link href="/login">Iniciar Sesion</Link>}
       </Item>
     </Menu>

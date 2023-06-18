@@ -3,7 +3,7 @@ import {
   CarTwoTone, CheckCircleTwoTone, SecurityScanTwoTone, SettingTwoTone,
 } from '@ant-design/icons';
 import {
-  Typography, Card, Row, Col,
+  Typography, Card, Row, Col, Image,
 } from 'antd';
 
 const { Title, Paragraph } = Typography;
@@ -84,6 +84,7 @@ const Index = () => (
           <CarTwoTone className="h-6 w-6 inline-block mr-2 align-middle" />
           SOBRE MTM
         </Title>
+        <Image src="/pres_mtm_1.jpg" alt="Sobre MTM" className="object-cover w-full h-64 mb-4 rounded-lg shadow-md" width={1200} />
         <Paragraph className="text-lg leading-relaxed">
           Nos caracteriza nuestra responsabilidad y cumplimiento. Transportamos cualquier tipo de mercancía a nivel nacional, contamos con una amplia gama de vehículos y personal capacitado para tu servicio. Nuestra trayectoria y experiencia nos consolida en el mercado del transporte de carga terrestre.
         </Paragraph>
@@ -97,6 +98,7 @@ const Index = () => (
           {' '}
 
         </Title>
+        <Image src="/manuelsegu.jpeg" alt="Seguridad" className="object-cover w-full h-64 mb-4 rounded-lg shadow-md" width={1200} />
         <Paragraph className="text-lg leading-relaxed">
           En MTM contamos con una central de monitoreo satelital 24/7, nuestro personal realiza un riguroso seguimiento de la carga desde la partida hasta que llega a su destino.
           Los vehículos cuentan con un sistema de rastreo GPS que nos permite ubicar su ruta. La carga llegará segura y a tiempo en su destino.
@@ -113,6 +115,7 @@ const Index = () => (
           {' '}
 
         </Title>
+        <Image src="/pres_mtm_2.jpg" alt="Seguridad" className="object-cover w-full h-64 mb-4 rounded-lg shadow-md" width={1200} />
         <Paragraph className="text-lg leading-relaxed">
           Transporte en todos los tipos de vehículos, contamos con experiencia en turbos, sencillos, dobletroques, patinetas, tractomulas y transporte especial en camabaja.
           {' '}

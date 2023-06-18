@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import {
-  message, Form, Input, Button, Card,
+  message, Form, Input, Button, Card, Typography,
 } from 'antd';
 import {
   setUser,
@@ -52,51 +52,57 @@ export default function Login() {
   return (
     <>
       <Card style={{ width: 300, margin: 'auto', marginTop: 50 }}>
+        <Typography.Title level={4}>
+          {!registering ? 'Señor usuario si quiere consultar su estado cuenta inicie sesión' : 'Te estas registrando con transportes MTM'}
+        </Typography.Title>
         {!registering ? (
-          <Form onFinish={handleSubmit}>
-            <Form.Item>
-              <Input
-                type="text"
-                placeholder="Usuario"
-                value={infouser}
-                onChange={(e) => setInfoUser(e.target.value)}
-                required
-              />
-            </Form.Item>
-            <Form.Item>
-              <Input.Password
-                type="password"
-                placeholder="Contraseña"
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                required
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{
-                  marginRight: 10,
-                  backgroundColor: '#1890ff', // o el color que desees para el fondo
-                  borderColor: '#1890ff', // o el color que desees para el borde
-                  color: '#fff',
+          <>
+            <Typography.Paragraph type="warning">Si no estás registrado, ¡hazlo ahora!</Typography.Paragraph>
+            <Form onFinish={handleSubmit}>
+              <Form.Item>
+                <Input
+                  type="text"
+                  placeholder="Usuario"
+                  value={infouser}
+                  onChange={(e) => setInfoUser(e.target.value)}
+                  required
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input.Password
+                  type="password"
+                  placeholder="Contraseña"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                  required
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{
+                    marginRight: 10,
+                    backgroundColor: '#1890ff',
+                    borderColor: '#1890ff',
+                    color: '#fff',
+                  }}
+                >
+                  Iniciar sesión
+                </Button>
+                <Button type="link" onClick={() => setRegistering(true)}>
+                  Registrar
+                </Button>
+              </Form.Item>
+            </Form>
 
-                }}
-              >
-                Iniciar sesión
-              </Button>
-              <Button type="link" onClick={() => setRegistering(true)}>
-                Registrar
-              </Button>
-            </Form.Item>
-          </Form>
+          </>
         ) : (
           <Form onFinish={handleSubmitRegister}>
             <Form.Item>
               <Input
                 type="text"
-                placeholder="Usuario"
+                placeholder="Nombre de usuario o Razon Social"
                 value={infouser}
                 onChange={(e) => setInfoUser(e.target.value)}
                 required
@@ -112,7 +118,7 @@ export default function Login() {
               />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" style={{ backgroundColor: 'blue' }}>
                 Registrarme
               </Button>
             </Form.Item>
