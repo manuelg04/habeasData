@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/selector';
-import { addDocument, getDocumentsByField, uploadFile } from './api/controllers/firebase';
+import { getDocumentsByField, uploadFile } from './api/controllers/firebase';
 
 const { Sider } = Layout;
 const { Search } = Input;
