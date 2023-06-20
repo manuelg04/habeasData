@@ -22,6 +22,7 @@
     "@react-pdf/renderer": "^3.0.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/node-jose": "^1.1.10",
+    "@vercel/analytics": "^1.0.1",
     "antd": "^5.5.0",
     "aws-sdk": "^2.1397.0",
     "axios": "^1.4.0",

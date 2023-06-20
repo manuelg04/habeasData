@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from '../components/navBar';
 import store from '../redux/store';
 import WelcomeUser from '../components/welcomeUser';
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps }) {
         <WelcomeUser />
         <Navbar />
         <Component {...pageProps} />
+        <Analytics />
       </PersistGate>
     </Provider>
 
