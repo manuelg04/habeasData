@@ -3,7 +3,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable max-len */
 import {
-  Layout, Menu, Input, Button, message, Alert, Form, Typography, Table,
+  Layout, Menu, Input, Button, message, Alert, Form, Typography, Table, Progress,
 } from 'antd';
 import { KeyOutlined, FileSearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [form, setForm] = useState({ Documento: '', Placa: '', Manifiesto: '' }); // Nuevo estado para el formulario
   const [file, setFile] = useState(null);
   const [excelData, setExcelData] = useState([]);
+  const [progress, setProgress] = useState(0);
   const currentUser = useSelector(selectUser);
   const isAdmin = currentUser.role === 'admin';
 
@@ -82,6 +83,9 @@ const Dashboard = () => {
       const batchSize = 100;
       for (let start = 0; start < datosExcel.length; start += batchSize) {
         await axios.post('/api/controllers/writeDataToFirestore', { data: datosExcel, start }); // Aquí pasas también el parámetro "start"
+        // Actualiza el progreso
+        const percentageComplete = Math.min(((start + batchSize) / datosExcel.length) * 100, 100);
+        setProgress(percentageComplete);
       }
 
       // La función podría devolver los datos de respuesta de la última llamada, si los necesitas
@@ -197,6 +201,7 @@ const Dashboard = () => {
               </button>
             </div>
           </form>
+          <Progress percent={progress} status="active" />
         </div>
       )}
       {activeKey === '2' && (
