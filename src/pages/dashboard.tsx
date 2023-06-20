@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
 /* eslint-disable max-len */
 import {
@@ -74,10 +75,17 @@ const Dashboard = () => {
 
   const getExcelData = async (url) => {
     try {
-      const response = await axios.get(`/api/controllers/getExcelData?url=${url}`);
-      setExcelData(response.data);
+      // Primera llamada para obtener los datos del archivo de Excel
+      const getResponse = await axios.get(`/api/controllers/getExcelData?url=${url}`);
+      const datosExcel = getResponse.data;
+
+      // Segunda llamada para escribir los datos en Firestore
+      const writeResponse = await axios.post('/api/controllers/writeDataToFirestore', { data: datosExcel });
+
+      // La función podría devolver los datos de respuesta de la segunda llamada, si los necesitas
+      return writeResponse.data;
     } catch (error) {
-      message.error('Error al obtener los datos del archivo');
+      message.error('Error al procesar los datos del archivo');
     }
   };
 
