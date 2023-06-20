@@ -87,7 +87,7 @@ const Dashboard = () => {
         const percentageComplete = Math.min(((start + batchSize) / datosExcel.length) * 100, 100);
         setProgress(percentageComplete);
       }
-
+      message.success('Datos cargados correctamente');
       // La función podría devolver los datos de respuesta de la última llamada, si los necesitas
       return datosExcel;
     } catch (error) {
