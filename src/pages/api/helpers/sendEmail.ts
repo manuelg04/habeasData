@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest) {
 
     return await transporter.sendMail({
       from: {
-        name: 'Habeas Data TRANS MTM',
+        name: 'Habeas Data TRANSPORTES MTM',
         address: 'habeasdata@transportesmtm.com',
       },
       ...mailOptions,
