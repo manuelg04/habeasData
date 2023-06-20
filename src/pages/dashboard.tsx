@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
 /* eslint-disable max-len */
@@ -75,15 +76,16 @@ const Dashboard = () => {
 
   const getExcelData = async (url) => {
     try {
-      // Primera llamada para obtener los datos del archivo de Excel
       const getResponse = await axios.get(`/api/controllers/getExcelData?url=${url}`);
       const datosExcel = getResponse.data;
 
-      // Segunda llamada para escribir los datos en Firestore
-      const writeResponse = await axios.post('/api/controllers/writeDataToFirestore', { data: datosExcel });
+      const batchSize = 100;
+      for (let start = 0; start < datosExcel.length; start += batchSize) {
+        await axios.post('/api/controllers/writeDataToFirestore', { data: datosExcel, start }); // Aquí pasas también el parámetro "start"
+      }
 
-      // La función podría devolver los datos de respuesta de la segunda llamada, si los necesitas
-      return writeResponse.data;
+      // La función podría devolver los datos de respuesta de la última llamada, si los necesitas
+      return datosExcel;
     } catch (error) {
       message.error('Error al procesar los datos del archivo');
     }
@@ -93,8 +95,7 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const result = await uploadFile(file);
-      const data = await getExcelData(result);
-      await addDocument('prueba', { data }); // asumiendo 'excelData' como el nombre de la colección
+      await getExcelData(result);
     } catch (error) {
       // message.error('Error al cargar el archivo');
     }

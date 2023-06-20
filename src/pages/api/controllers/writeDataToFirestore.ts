@@ -1,11 +1,15 @@
+/* eslint-disable max-len */
 // writeDataToFirestore.ts
 import { addDocument } from './firebase';
 
 export default async function handler(req, res) {
-  const { data } = req.body;
+  const { data, start } = req.body;
+
+  const batchSize = 100; // Define un tamaño de lote, por ejemplo 100
+  const slicedData = data.slice(start, start + batchSize); // Toma solo una porción de los datos
 
   try {
-    const cleanedData = data.map((row) => {
+    const cleanedData = slicedData.map((row) => {
       const cleanedRow = {
         MFTO: row[0] || '',
         PLACA: row[1] || '',
@@ -34,7 +38,7 @@ export default async function handler(req, res) {
 
     await Promise.all(promises);
 
-    res.status(200).json(cleanedData);
+    res.status(200).json({ processedRows: cleanedData.length }); // Devuelve el número de filas procesadas
   } catch (error) {
     res.status(500).json({ error: error.toString() });
   }
