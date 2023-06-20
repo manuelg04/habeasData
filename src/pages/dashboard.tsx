@@ -88,7 +88,7 @@ const Dashboard = () => {
       const data = await getExcelData(result);
       await addDocument('prueba', { data }); // asumiendo 'excelData' como el nombre de la colección
     } catch (error) {
-      message.error('Error al cargar el archivo');
+      // message.error('Error al cargar el archivo');
     }
   };
 

@@ -39,9 +39,11 @@ export default async function handler(req, res) {
       return cleanedRow;
     });
     // Añade cada fila a Firestore
-    for (const row of cleanedData) {
-      await addDocument('prueba', row);
-    }
+    // Crear un array de promesas para cada operación de addDocument
+    const promises = cleanedData.map((row) => addDocument('prueba', row));
+
+    // Ejecutar todas las promesas en paralelo y esperar a que todas se completen
+    await Promise.all(promises);
     res.status(200).json(cleanedData);
   } catch (error) {
     res.status(500).json({ error: error.toString() });
