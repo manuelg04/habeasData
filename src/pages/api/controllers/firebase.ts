@@ -59,3 +59,25 @@ export async function getDocumentsByField(collectionName, fieldName, value) {
   const documents = querySnapshot.docs.map((doc) => doc.data());
   return documents;
 }
+
+export async function uploadFileWithDocument(file, documentNumber) {
+  const storageRef = ref(storage, v4());
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+
+  // Añade un documento a Firestore que contiene el número de documento y la URL del archivo
+  await addDocument('pdfDocuments', {
+    documentNumber,
+    url,
+  });
+
+  return url;
+}
+
+export async function findPDFByDocumentNumber(documentNumber) {
+  const documents = await getDocumentsByField('pdfDocuments', 'documentNumber', documentNumber);
+  if (documents.length > 0) {
+    return documents[0].url; // Retorna la URL del primer documento que coincida
+  }
+  throw new Error(`No se encontró un documento con este número: ${documentNumber}`);
+}

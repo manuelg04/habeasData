@@ -1,3 +1,4 @@
+/* eslint-disable promise/always-return */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
@@ -5,12 +6,16 @@
 import {
   Layout, Menu, Input, Button, message, Alert, Form, Typography, Table, Progress,
 } from 'antd';
-import { KeyOutlined, FileSearchOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+  KeyOutlined, FileSearchOutlined, UploadOutlined, DollarOutlined, FilePdfOutlined,
+} from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/selector';
-import { getDocumentsByField, uploadFile } from './api/controllers/firebase';
+import {
+  findPDFByDocumentNumber, getDocumentsByField, uploadFile, uploadFileWithDocument,
+} from './api/controllers/firebase';
 
 const { Sider } = Layout;
 const { Search } = Input;
@@ -20,8 +25,10 @@ const Dashboard = () => {
   const [activeKey, setActiveKey] = useState('1'); // nuevo estado
   const [form, setForm] = useState({ Documento: '', Placa: '', Manifiesto: '' }); // Nuevo estado para el formulario
   const [file, setFile] = useState(null);
+  const [searchDocumentNumber, setSearchDocumentNumber] = useState('');
   const [excelData, setExcelData] = useState([]);
   const [progress, setProgress] = useState(0);
+  const [getPdfUrl, setGetPdfUrl] = useState(null);
   const currentUser = useSelector(selectUser);
   const isAdmin = currentUser.role === 'admin';
 
@@ -152,6 +159,25 @@ const Dashboard = () => {
     },
   ];
 
+  const handlePDFSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const documentNumber = prompt('Ingrese el número de documento para este PDF');
+      await uploadFileWithDocument(file, documentNumber);
+    } catch (error) {
+      message.error('Error al cargar el archivo');
+    }
+  };
+
+  const handleDocumentNumberSubmit = async () => {
+    try {
+      const pdfUrl = await findPDFByDocumentNumber(searchDocumentNumber);
+      setGetPdfUrl(pdfUrl); // Abre el PDF en una nueva pestaña
+    } catch (error) {
+      message.error('No se encontró el PDF');
+    }
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider>
@@ -163,6 +189,12 @@ const Dashboard = () => {
               </Menu.Item>
               <Menu.Item key="3" icon={<UploadOutlined />}>
                 Cargar Excel
+              </Menu.Item>
+              <Menu.Item key="4" icon={<DollarOutlined />}>
+                Cargar liquidaciones/pagos
+              </Menu.Item>
+              <Menu.Item key="5" icon={<DollarOutlined />}>
+                Tramites
               </Menu.Item>
 
             </>
@@ -221,6 +253,39 @@ const Dashboard = () => {
           </Form.Item>
         </Form>
         <Table dataSource={excelData} columns={columns} />
+      </div>
+      )}
+      {activeKey === '5' && (
+        <>
+          <Input
+            value={searchDocumentNumber}
+            onChange={(e) => setSearchDocumentNumber(e.target.value)}
+            placeholder="Buscar por doc"
+            onPressEnter={handleDocumentNumberSubmit}
+          />
+
+          {getPdfUrl && (
+          <a href={getPdfUrl} target="_blank" rel="noopener noreferrer">
+            <FilePdfOutlined />
+            {' '}
+            Descarga tu PDF aquí
+          </a>
+          )}
+        </>
+      )}
+      {isAdmin && activeKey === '4' && (
+      <div className="p-4">
+        <form onSubmit={handlePDFSubmit} className="flex items-center justify-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <div className="mb-4">
+            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="file" onChange={(e) => setFile(e.target.files[0])} />
+          </div>
+          <div className="mb-6">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              Upload
+            </button>
+          </div>
+        </form>
+        <Progress percent={progress} status="active" />
       </div>
       )}
       {/* Aquí se pueden agregar más componentes que se muestren con base en activeKey */}
