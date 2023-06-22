@@ -1,10 +1,3 @@
-/* eslint-disable no-shadow */
-/* eslint-disable import/no-duplicates */
-/* eslint-disable promise/catch-or-return */
-/* eslint-disable react/jsx-no-useless-fragment */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable promise/always-return */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable consistent-return */
@@ -14,9 +7,9 @@ import {
   Layout, Menu, Input, Button, message, Alert, Form, Typography, Table, Progress, Dropdown, Upload,
 } from 'antd';
 import {
-  KeyOutlined, FileSearchOutlined, UploadOutlined, DollarOutlined, FilePdfOutlined, PlusOutlined, DownOutlined,
+  KeyOutlined, FileSearchOutlined, UploadOutlined, DollarOutlined, FilePdfOutlined,
 } from '@ant-design/icons';
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import {
@@ -25,16 +18,20 @@ import {
 import XLSX from 'xlsx';
 import { selectUser } from '../redux/selector';
 import {
-  getMftoByNumber,
-  storage, uploadFile, uploadImage, uploadPdf,
-} from './api/controllers/firebase'; // Asegúrate de que esta ruta apunta a tu configuración de Firebase
-import { getMFTO } from './api/controllers/getMFTO'; // Asegúrate de que esta ruta apunta a tu función getMFTO
+  findPDFByDocumentNumber, getDocumentsByField, uploadFile, uploadFileWithDocument,
+} from './api/controllers/firebase';
 
 const { Sider } = Layout;
 const { Search } = Input;
 
 const Dashboard = () => {
   const [activeKey, setActiveKey] = useState('1'); // nuevo estado
+  const [form, setForm] = useState({ Documento: '', Placa: '', Manifiesto: '' }); // Nuevo estado para el formulario
+  const [file, setFile] = useState(null);
+  const [searchDocumentNumber, setSearchDocumentNumber] = useState('');
+  const [excelData, setExcelData] = useState([]);
+  const [progress, setProgress] = useState(0);
+  const [getPdfUrl, setGetPdfUrl] = useState(null);
   const currentUser = useSelector(selectUser);
   // Estado para los datos de la tabla
   const [tableData, setTableData] = useState([]);
@@ -145,9 +142,21 @@ const Dashboard = () => {
       <Sider>
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onSelect={({ key }) => setActiveKey(key)}>
           {isAdmin && (
-            <Menu.Item key="1" icon={<UploadOutlined />}>
-              Cargar Libro de fletes
-            </Menu.Item>
+            <>
+              <Menu.Item key="1" icon={<KeyOutlined />}>
+                Generar contraseña
+              </Menu.Item>
+              <Menu.Item key="3" icon={<UploadOutlined />}>
+                Cargar Excel
+              </Menu.Item>
+              <Menu.Item key="4" icon={<DollarOutlined />}>
+                Cargar liquidaciones/pagos
+              </Menu.Item>
+              <Menu.Item key="5" icon={<DollarOutlined />}>
+                Tramites
+              </Menu.Item>
+
+            </>
           )}
           <Menu.Item key="2" icon={<FileSearchOutlined />}>
             Consulte estado de cuenta
@@ -176,17 +185,56 @@ const Dashboard = () => {
         </div>
       )}
       {activeKey === '2' && (
-        <div>
-          <Typography.Title>
-            Bienvenido,
+      <div style={{ padding: '15px' }}>
+        <Typography.Title>Estado de Cuenta</Typography.Title>
+        <Alert message="Las facturas electrónicas DEBEN ser enviadas al correo establecido por transportes MTM el cual es facturacionelectronica@transportesmtm.com para poder darle trámite y programación de pago del servicio." type="info" showIcon />
+        <Alert message="Si al momento de buscar el servicio no le arroja observaciones, quiere decir que al momento no ha llegado documentación a la oficina principal." type="info" showIcon />
+        <Form onFinish={handleFormSubmit}>
+          <Form.Item>
+            <Input name="Documento" placeholder="Documento" value={form.Documento} onChange={handleFormChange} />
+          </Form.Item>
+          <Form.Item>
+            <Input name="Manifiesto" placeholder="No Manifiesto" value={form.Manifiesto} onChange={handleFormChange} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" onClick={handleFormSubmit} style={{ backgroundColor: 'blue' }}>Buscar</Button>
+          </Form.Item>
+        </Form>
+        <Table dataSource={excelData} columns={columns} />
+      </div>
+      )}
+      {activeKey === '5' && (
+        <>
+          <Input
+            value={searchDocumentNumber}
+            onChange={(e) => setSearchDocumentNumber(e.target.value)}
+            placeholder="Buscar por doc"
+            onPressEnter={handleDocumentNumberSubmit}
+          />
+
+          {getPdfUrl && (
+          <a href={getPdfUrl} target="_blank" rel="noopener noreferrer">
+            <FilePdfOutlined />
             {' '}
-            {currentUser.usuario}
-          </Typography.Title>
-          <p>Sección para Consultar estado de cuenta</p>
-          <Input placeholder="Ingresa tu número de MFTO" style={{ marginBottom: '20px' }} value={searchMFTO} onChange={(e) => setSearchMFTO(e.target.value)} />
-          <Button onClick={handleSearchMFTO}>Buscar</Button>
-          <Table columns={columns} dataSource={tableData} />
-        </div>
+            Descarga tu PDF aquí
+          </a>
+          )}
+        </>
+      )}
+      {isAdmin && activeKey === '4' && (
+      <div className="p-4">
+        <form onSubmit={handlePDFSubmit} className="flex items-center justify-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <div className="mb-4">
+            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="file" onChange={(e) => setFile(e.target.files[0])} />
+          </div>
+          <div className="mb-6">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              Upload
+            </button>
+          </div>
+        </form>
+        <Progress percent={progress} status="active" />
+      </div>
       )}
     </Layout>
   );
