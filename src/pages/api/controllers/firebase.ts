@@ -1,3 +1,6 @@
+/* eslint-disable promise/no-nesting */
+/* eslint-disable no-case-declarations */
+/* eslint-disable no-console */
 /* eslint-disable no-shadow */
 /* eslint-disable no-return-await */
 /* eslint-disable promise/catch-or-return */
@@ -5,7 +8,7 @@
 /* eslint-disable import/prefer-default-export */
 import { initializeApp } from 'firebase/app';
 import {
-  getStorage, ref, uploadBytes, getDownloadURL,
+  getStorage, ref, uploadBytes, getDownloadURL, getBlob,
 } from 'firebase/storage';
 import { v4 } from 'uuid';
 import {
@@ -27,57 +30,35 @@ export const storage = getStorage(app);
 export const db = getFirestore(app);
 
 export async function uploadFile(file) {
-  const storageRef = ref(storage, v4());
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return url;
-}
+  const ext = file.name.split('.')[1];
+  const storageRef = ref(storage, `${v4()}.${ext}`);
+  switch (ext) {
+    case 'pdf':
+      const prueba = await uploadBytes(storageRef, file);
+      console.log('🚀 ~ prueba:', prueba);
+      const URL1 = await getDownloadURL(storageRef);
+      console.log('🚀 ~ URL:', URL1);
+      break;
+    case 'xlsx':
+      await uploadBytes(storageRef, file);
+      const URL2 = await getDownloadURL(storageRef);
+      console.log('🚀 ~ URL:', URL2);
+      break;
 
-export async function getDocument(collection, id) {
-  const docRef = doc(db, collection, id);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    return docSnap.data();
+    default:
+      break;
   }
-  throw new Error('No such document!');
-}
-
-export async function addDocument(collectionName, data) {
-  await addDoc(collection(db, collectionName), data);
-}
-
-export async function getDocuments(collectionName) {
-  const querySnapshot = await getDocs(collection(db, collectionName));
-  const documents = querySnapshot.docs.map((doc) => doc.data());
-  return documents;
-}
-
-export async function getDocumentsByField(collectionName, fieldName, value) {
-  const q = query(collection(db, collectionName), where(fieldName, '==', value));
-  const querySnapshot = await getDocs(q);
-  const documents = querySnapshot.docs.map((doc) => doc.data());
-  return documents;
-}
-
-export async function uploadFileWithDocument(file, documentNumber) {
-  const storageRef = ref(storage, v4());
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-
-  // Añade un documento a Firestore que contiene el número de documento y la URL del archivo
-  await addDocument('pdfDocuments', {
-    documentNumber,
-    url,
-  });
 
   return url;
 }
 
-export async function findPDFByDocumentNumber(documentNumber) {
-  const documents = await getDocumentsByField('pdfDocuments', 'documentNumber', documentNumber);
-  if (documents.length > 0) {
-    return documents[0].url; // Retorna la URL del primer documento que coincida
+export async function downloadFileByName(fileName) {
+  // const pathReference = ref(storage, `${fileName}.pdf`);
+  // const gsReference = ref(storage, 'gs://excelmtm-c7061.appspot.com/44025364-d8e3-4e55-9186-193bf5a49a11.pdf');
+  try {
+    const fileUrl = await getDownloadURL(ref(storage, fileName));
+    window.open(fileUrl, '_blank');
+  } catch (error) {
+    console.log(error);
   }
-  throw new Error(`No se encontró un documento con este número: ${documentNumber}`);
 }
