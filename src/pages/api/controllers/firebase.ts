@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-shadow */
 /* eslint-disable no-return-await */
 /* eslint-disable promise/catch-or-return */
@@ -44,7 +45,12 @@ export async function getDocument(collection, id) {
 }
 
 export async function addDocument(collectionName, data) {
-  await addDoc(collection(db, collectionName), data);
+  try {
+    const docRef = await addDoc(collection(db, collectionName), data);
+    console.log('Document written with ID: ', docRef.id);
+  } catch (error) {
+    console.error('Error adding document: ', error);
+  }
 }
 
 export async function getDocuments(collectionName) {
@@ -58,4 +64,12 @@ export async function getDocumentsByField(collectionName, fieldName, value) {
   const querySnapshot = await getDocs(q);
   const documents = querySnapshot.docs.map((doc) => doc.data());
   return documents;
+}
+
+export async function findPDFByDocumentNumber(documentNumber) {
+  const documents = await getDocumentsByField('pdfDocuments', 'documentNumber', documentNumber);
+  if (documents.length > 0) {
+    return documents[0].url; // Retorna la URL del primer documento que coincida
+  }
+  throw new Error(`No se encontró un documento con este número: ${documentNumber}`);
 }

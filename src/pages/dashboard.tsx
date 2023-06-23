@@ -1,23 +1,23 @@
+/* eslint-disable no-console */
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable promise/always-return */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
 /* eslint-disable max-len */
 import {
-  Layout, Menu, Input, Button, message, Alert, Form, Typography, Table, Progress, Dropdown, Upload,
+  Layout, Menu, Input, Button, message, Alert, Form, Typography, Table, Progress, Popover, Space,
 } from 'antd';
 import {
-  KeyOutlined, FileSearchOutlined, UploadOutlined, DollarOutlined, FilePdfOutlined,
+  KeyOutlined, FileSearchOutlined, UploadOutlined, DollarOutlined, FilePdfOutlined, PlusOutlined,
 } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import {
-  getStorage, ref, uploadBytes, getDownloadURL,
-} from 'firebase/storage';
-import XLSX from 'xlsx';
 import { selectUser } from '../redux/selector';
 import {
+  addDocument,
   findPDFByDocumentNumber, getDocumentsByField, uploadFile, uploadFileWithDocument,
 } from './api/controllers/firebase';
 
@@ -25,6 +25,7 @@ const { Sider } = Layout;
 const { Search } = Input;
 
 const Dashboard = () => {
+  const [selectedUser, setSelectedUser] = useState(null);
   const [activeKey, setActiveKey] = useState('1'); // nuevo estado
   const [form, setForm] = useState({ Documento: '', Placa: '', Manifiesto: '' }); // Nuevo estado para el formulario
   const [file, setFile] = useState(null);
@@ -33,109 +34,210 @@ const Dashboard = () => {
   const [progress, setProgress] = useState(0);
   const [getPdfUrl, setGetPdfUrl] = useState(null);
   const currentUser = useSelector(selectUser);
-  // Estado para los datos de la tabla
-  const [tableData, setTableData] = useState([]);
-  // Estado para manejar la carga de archivos
-  const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-
   const isAdmin = currentUser.role === 'admin';
 
-  const handleUploadExcel = async () => {
-    if (!file) return;
-    setUploading(true);
-
+  const handleSearch = async (value) => {
     try {
-      const formData = new FormData();
-      formData.append('excelFile', file);
+      // Llama a tu API para buscar al usuario por nombre
+      const response = await axios.get(`/api/findInternUsers?id=${value}`);
 
-      const response = await axios.post('/api/controllers/insertExcelData', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 200) {
-        message.success('Data inserted successfully');
-      } else {
-        message.error('Failed to insert data');
+      if (response.data) {
+        setSelectedUser(response.data);
+        message.success('Usuario encontrado');
       }
     } catch (error) {
-      console.error('Error uploading Excel file:', error);
-      message.error('Failed to upload Excel file');
+      message.error('Usuario no encontrado');
+      setSelectedUser(null);
     }
-
-    setUploading(false);
   };
 
+  const generatePassword = (length) => {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += charset[Math.floor(Math.random() * charset.length)];
+    }
+    return password;
+  };
 
-  // Define la estructura de las columnas
+  useEffect(() => {
+    generatePassword(16);
+  }, []);
+
+  const handleFormSubmit = async () => {
+    // Se realiza la búsqueda en firebase en función de los campos que no están vacíos
+    if (form.Documento !== '') {
+      const result = await getDocumentsByField('prueba', 'DOCUMENTO', form.Documento);
+      setExcelData(result);
+    } else if (form.Placa !== '') {
+      const result = await getDocumentsByField('prueba', 'PLACA', form.Placa);
+      setExcelData(result);
+    } else if (form.Manifiesto !== '') {
+      const result = await getDocumentsByField('prueba', 'MFTO', form.Manifiesto);
+      setExcelData(result);
+    }
+  };
+
+  const handleFormChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handlePasswordGeneration = () => {
+    const password = generatePassword(10);
+    message.success(`La nueva contraseña es: ${password}`);
+  };
+
+  const getExcelData = async (url) => {
+    try {
+      const getResponse = await axios.get(`/api/controllers/getExcelData?url=${url}`);
+      const datosExcel = getResponse.data;
+
+      const batchSize = 100;
+      for (let start = 0; start < datosExcel.length; start += batchSize) {
+        await axios.post('/api/controllers/writeDataToFireStore', { data: datosExcel, start }); // Aquí pasas también el parámetro "start"
+        // Actualiza el progreso
+        const percentageComplete = Math.min(((start + batchSize) / datosExcel.length) * 100, 100);
+        setProgress(percentageComplete);
+      }
+      message.success('Datos cargados correctamente');
+      // La función podría devolver los datos de respuesta de la última llamada, si los necesitas
+      return datosExcel;
+    } catch (error) {
+      message.error('Error al procesar los datos del archivo');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await uploadFile(file);
+      await getExcelData(result);
+    } catch (error) {
+      // message.error('Error al cargar el archivo');
+    }
+  };
+
+  function SubirLiquidacion({ record }) {
+    const handleChange = (e) => {
+      setFile(e.target.files[0]);
+    };
+
+    const handleClick = async () => {
+      try {
+        // Subir el archivo a Firebase Storage y obtener la URL de descarga
+        const url = await uploadFile(file);
+        console.log('🚀 ~ url:', url);
+
+        // Obtener el documento de Firestore que corresponde a este MFTO
+        const documents = await getDocumentsByField('prueba', 'MFTO', record.MFTO);
+        console.log('🚀 ~ documents:', documents);
+
+        if (documents.length > 0) {
+          const doc = documents[0];
+
+          // Actualizar el documento con la URL de la liquidación
+          await addDocument('prueba', doc.id);
+        } else {
+          throw new Error(`No se encontró un documento con MFTO: ${record.MFTO}`);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    return (
+      <div>
+        <input type="file" onChange={handleChange} />
+        <button onClick={handleClick}>Subir Liquidación</button>
+      </div>
+    );
+  }
+  function subirPago(record) {
+    console.log('Subir Pago', record);
+  }
+
   const columns = [
     {
       title: 'MFTO',
-      dataIndex: 'mfto',
-      key: 'mfto',
+      dataIndex: 'MFTO',
     },
     {
       title: 'PLACA',
-      dataIndex: 'placa',
-      key: 'placa',
+      dataIndex: 'PLACA',
     },
     {
       title: 'PROPIETARIO',
-      dataIndex: 'propietario',
-      key: 'propietario',
+      dataIndex: 'PROPIETARIO',
     },
     {
       title: 'DOCUMENTO',
-      dataIndex: 'documento',
-      key: 'documento',
+      dataIndex: 'DOCUMENTO',
     },
     {
       title: 'FLETE PAGADO',
-      dataIndex: 'fletePagado',
-      key: 'fletePagado',
+      dataIndex: 'FLETE PAGADO',
     },
     {
       title: 'ANTICIPOS',
-      dataIndex: 'anticipos',
-      key: 'anticipos',
+      dataIndex: 'ANTICIPOS',
     },
     {
       title: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
-      dataIndex: 'retenciones',
-      key: 'retenciones',
+      dataIndex: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
     },
     {
       title: 'POLIZA / ESTAMPILLA',
-      dataIndex: 'poliza',
-      key: 'poliza',
+      dataIndex: 'POLIZA / ESTAMPILLA',
     },
     {
       title: 'FALTANTE / O DAÑO EN LA MERCANCIA',
-      dataIndex: 'faltante',
-      key: 'faltante',
+      dataIndex: 'FALTANTE / O DAÑO EN LA MERCANCIA',
     },
     {
       title: 'VR. SALDO CANCELAR',
-      dataIndex: 'saldoCancelar',
-      key: 'saldoCancelar',
+      dataIndex: 'VR. SALDO CANCELAR',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',
-      dataIndex: 'fechaConsignacion',
-      key: 'fechaConsignacion',
+      dataIndex: 'FECHA CONSIGNACION SALDO',
     },
     {
-      title: 'ACCIONES',
-      dataIndex: 'acciones',
+      title: 'Acciones',
       key: 'acciones',
-      // Aquí puedes agregar los botones o acciones necesarias
-      render: () => (
-        <Button>Acción</Button>
+      render: (_, record) => (
+        <Popover
+          placement="bottom"
+          title="Acciones"
+          content={(
+            <Space direction="vertical">
+              <SubirLiquidacion record={record} />
+              <Button onClick={() => subirPago(record)}>Subir Pago</Button>
+            </Space>
+                )}
+          trigger="click"
+        >
+          <Button type="primary" shape="circle" icon={<PlusOutlined />} />
+        </Popover>
       ),
     },
   ];
+
+  const handlePDFSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const documentNumber = prompt('Ingrese el número de documento para este PDF');
+      await uploadFileWithDocument(file, documentNumber);
+    } catch (error) {
+      message.error('Error al cargar el archivo');
+    }
+  };
+
+  const handleDocumentNumberSubmit = async () => {
+    try {
+      const pdfUrl = await findPDFByDocumentNumber(searchDocumentNumber);
+      setGetPdfUrl(pdfUrl); // Abre el PDF en una nueva pestaña
+    } catch (error) {
+      message.error('No se encontró el PDF');
+    }
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -159,7 +261,7 @@ const Dashboard = () => {
             </>
           )}
           <Menu.Item key="2" icon={<FileSearchOutlined />}>
-            Consulte estado de cuenta
+            Consulte Estado de Cuenta
           </Menu.Item>
         </Menu>
       </Sider>
@@ -170,18 +272,29 @@ const Dashboard = () => {
             {' '}
             {currentUser.usuario}
           </Typography.Title>
-          <p>Sección para Cargar Libro de fletes</p>
-          <Upload
-            beforeUpload={(file) => {
-              setFile(file);
-              return false;
-            }}
-          >
-            <Button icon={<UploadOutlined />}>Seleccionar Archivo</Button>
-          </Upload>
-          <Button onClick={handleUploadExcel} loading={uploading} style={{ marginTop: 16 }}>
-            {uploading ? 'Cargando...' : 'Cargar Archivo'}
+          <Search placeholder="Buscar por nombre" onSearch={handleSearch} style={{ width: 200, margin: '15px 0' }} />
+          {selectedUser && (
+          <Button onClick={handlePasswordGeneration}>
+            Generar contraseña para
+            {' '}
+            {selectedUser.usuario}
           </Button>
+          )}
+        </div>
+      )}
+      {isAdmin && activeKey === '3' && (
+        <div className="p-4">
+          <form onSubmit={handleSubmit} className="flex items-center justify-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div className="mb-4">
+              <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="file" onChange={(e) => setFile(e.target.files[0])} />
+            </div>
+            <div className="mb-6">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                Upload
+              </button>
+            </div>
+          </form>
+          <Progress percent={progress} status="active" />
         </div>
       )}
       {activeKey === '2' && (
@@ -236,6 +349,7 @@ const Dashboard = () => {
         <Progress percent={progress} status="active" />
       </div>
       )}
+      {/* Aquí se pueden agregar más componentes que se muestren con base en activeKey */}
     </Layout>
   );
 };
