@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/selector';
 import {
   addDocument,
-  findPDFByDocumentNumber, getDocumentsByField, uploadFile, uploadFileWithDocument,
+  findPDFByDocumentNumber, getDocumentsByField, uploadFile,
 } from './api/controllers/firebase';
 
 const { Sider } = Layout;
@@ -220,14 +220,14 @@ const Dashboard = () => {
     },
   ];
 
-  const handlePDFSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const documentNumber = prompt('Ingrese el número de documento para este PDF');
-      await uploadFileWithDocument(file, documentNumber);
-    } catch (error) {
-      message.error('Error al cargar el archivo');
-    }
+  const handlePDFSubmit = async () => {
+    // e.preventDefault();
+    // try {
+    //   const documentNumber = prompt('Ingrese el número de documento para este PDF');
+    //   await (file, documentNumber);
+    // } catch (error) {
+    //   message.error('Error al cargar el archivo');
+    // }
   };
 
   const handleDocumentNumberSubmit = async () => {
