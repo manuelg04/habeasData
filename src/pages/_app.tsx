@@ -5,21 +5,24 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Analytics } from '@vercel/analytics/react';
 import Navbar from '../components/navBar';
 import store from '../redux/store';
-import WelcomeUser from '../components/welcomeUser';
+import MyFooter from '../components/footer';
 
 const persistor = persistStore(store);
 
 function MyApp({ Component, pageProps }) {
   return (
 
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <WelcomeUser />
-        <Navbar />
-        <Component {...pageProps} />
-        <Analytics />
-      </PersistGate>
-    </Provider>
+    <>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <Navbar />
+          <Component {...pageProps} />
+          <Analytics />
+        </PersistGate>
+      </Provider>
+      <MyFooter />
+
+    </>
 
   );
 }

@@ -1,10 +1,12 @@
+/* eslint-disable quotes */
+/* eslint-disable camelcase */
 /* eslint-disable react/jsx-no-useless-fragment */
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import {
-  message, Form, Input, Button, Card, Typography,
+  message, Form, Input, Button, Card, Typography, Alert,
 } from 'antd';
 import {
   setUser,
@@ -51,23 +53,93 @@ export default function Login() {
 
   return (
     <>
-      <Card style={{ width: 300, margin: 'auto', marginTop: 50 }}>
-        <Typography.Title level={4}>
-          {!registering ? 'Señor usuario si quiere consultar su estado cuenta inicie sesión' : 'Te estas registrando con transportes MTM'}
-        </Typography.Title>
-        {!registering ? (
-          <>
-            <Typography.Paragraph type="warning">Si no estás registrado, ¡hazlo ahora!</Typography.Paragraph>
-            <Form onFinish={handleSubmit}>
+      <div style={{
+        backgroundImage: `url(/pres_mtm_3.jpg)`,
+        backgroundSize: 'cover', // Asegura que la imagen de fondo cubra toda la pantalla
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      >
+        <Alert
+          message="Atención"
+          description="Señor usuario, por motivos de seguridad y políticas de la compañía se ha protegido la información mostrada por transportes MTM a sus usuarios."
+          type="warning"
+          showIcon
+          style={{ maxWidth: '80%', marginBottom: '30px' }}
+        />
+        <Card style={{
+          width: 300, margin: 'auto', marginTop: 80, backgroundColor: 'lightgray',
+        }}
+        >
+          <Typography.Title level={4}>
+            {!registering ? 'Señor usuario si quiere consultar su estado cuenta inicie sesión' : 'Te estas registrando con transportes MTM'}
+          </Typography.Title>
+          {!registering ? (
+            <>
+              <Typography.Paragraph type="warning">Si no estás registrado, ¡hazlo ahora!</Typography.Paragraph>
+              <Form onFinish={handleSubmit}>
+                <Form.Item>
+                  <Input
+                    type="text"
+                    placeholder="Usuario"
+                    value={infouser}
+                    onChange={(e) => setInfoUser(e.target.value)}
+                    required
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Input.Password
+                    type="password"
+                    placeholder="Contraseña"
+                    value={pass}
+                    onChange={(e) => setPass(e.target.value)}
+                    required
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{
+                      marginRight: 10,
+                      backgroundColor: '#1890ff',
+                      borderColor: '#1890ff',
+                      color: '#fff',
+                    }}
+                  >
+                    Iniciar sesión
+                  </Button>
+                  <Button type="link" onClick={() => setRegistering(true)}>
+                    Registrar
+                  </Button>
+                </Form.Item>
+              </Form>
+
+            </>
+          ) : (
+            <Form onFinish={handleSubmitRegister}>
               <Form.Item>
                 <Input
                   type="text"
-                  placeholder="Usuario"
+                  placeholder="No de cédula o NIT"
                   value={infouser}
                   onChange={(e) => setInfoUser(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   required
                 />
               </Form.Item>
+              <Typography.Paragraph type="secondary">
+                Señor usuario recuerde que el campo de Documento solo admite Numeros
+              </Typography.Paragraph>
+
               <Form.Item>
                 <Input.Password
                   type="password"
@@ -78,53 +150,14 @@ export default function Login() {
                 />
               </Form.Item>
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{
-                    marginRight: 10,
-                    backgroundColor: '#1890ff',
-                    borderColor: '#1890ff',
-                    color: '#fff',
-                  }}
-                >
-                  Iniciar sesión
-                </Button>
-                <Button type="link" onClick={() => setRegistering(true)}>
-                  Registrar
+                <Button type="primary" htmlType="submit" style={{ backgroundColor: 'blue' }}>
+                  Registrarme
                 </Button>
               </Form.Item>
             </Form>
-
-          </>
-        ) : (
-          <Form onFinish={handleSubmitRegister}>
-            <Form.Item>
-              <Input
-                type="text"
-                placeholder="Nombre de usuario o Razon Social"
-                value={infouser}
-                onChange={(e) => setInfoUser(e.target.value)}
-                required
-              />
-            </Form.Item>
-            <Form.Item>
-              <Input.Password
-                type="password"
-                placeholder="Contraseña"
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                required
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" style={{ backgroundColor: 'blue' }}>
-                Registrarme
-              </Button>
-            </Form.Item>
-          </Form>
-        )}
-      </Card>
+          )}
+        </Card>
+      </div>
     </>
   );
 }

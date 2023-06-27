@@ -11,7 +11,7 @@ const Contactanos = () => (
   <div style={{
     padding: '2em',
     backgroundColor: '#f0f2f5',
-    height: '100vh',
+    minHeight: '100vh', // Aquí está el cambio
   }}
   >
     <Title style={{ color: '#003a8c' }}>Contáctanos</Title>

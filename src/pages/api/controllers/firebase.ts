@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-console */
 /* eslint-disable no-shadow */
 /* eslint-disable no-return-await */
@@ -10,8 +11,11 @@ import {
 } from 'firebase/storage';
 import { v4 } from 'uuid';
 import {
-  getFirestore, doc, getDoc, collection, addDoc, getDocs, query, where,
+  addDoc,
+  collection,
+  getFirestore,
 } from 'firebase/firestore';
+import { utils, read } from 'xlsx';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBZpSX3frkc1rRejJ-j8EvxdIIv--28wxE',
@@ -27,49 +31,30 @@ const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const db = getFirestore(app);
 
+export async function processExcel(file) {
+  const response = await fetch(file); // obtén el archivo de excel desde la URL
+  const arrayBuffer = await response.arrayBuffer(); // convierte el archivo en arrayBuffer
+  const data = new Uint8Array(arrayBuffer);
+  const workbook = read(data, { type: 'array' }); // lee el archivo de excel
+  const worksheet = workbook.Sheets[workbook.SheetNames[0]]; // selecciona la primera hoja
+
+  // Convierte el archivo de excel en un objeto JSON
+  const jsonData = utils.sheet_to_json(worksheet, { raw: false });
+
+  // Luego, puedes almacenar jsonData en Firestore. Asegúrate de tener la estructura correcta de acuerdo con tus necesidades
+  const collectionRef = collection(db, 'nombre_de_tu_colección');
+  jsonData.forEach(async (row) => {
+    await addDoc(collectionRef, row);
+  });
+}
+
 export async function uploadFile(file) {
   const storageRef = ref(storage, v4());
   await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
+
+  // Después de subir el archivo, lo procesamos
+  await processExcel(url);
+
   return url;
-}
-
-export async function getDocument(collection, id) {
-  const docRef = doc(db, collection, id);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    return docSnap.data();
-  }
-  throw new Error('No such document!');
-}
-
-export async function addDocument(collectionName, data) {
-  try {
-    const docRef = await addDoc(collection(db, collectionName), data);
-    console.log('Document written with ID: ', docRef.id);
-  } catch (error) {
-    console.error('Error adding document: ', error);
-  }
-}
-
-export async function getDocuments(collectionName) {
-  const querySnapshot = await getDocs(collection(db, collectionName));
-  const documents = querySnapshot.docs.map((doc) => doc.data());
-  return documents;
-}
-
-export async function getDocumentsByField(collectionName, fieldName, value) {
-  const q = query(collection(db, collectionName), where(fieldName, '==', value));
-  const querySnapshot = await getDocs(q);
-  const documents = querySnapshot.docs.map((doc) => doc.data());
-  return documents;
-}
-
-export async function findPDFByDocumentNumber(documentNumber) {
-  const documents = await getDocumentsByField('pdfDocuments', 'documentNumber', documentNumber);
-  if (documents.length > 0) {
-    return documents[0].url; // Retorna la URL del primer documento que coincida
-  }
-  throw new Error(`No se encontró un documento con este número: ${documentNumber}`);
 }

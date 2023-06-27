@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -8,6 +10,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Menu, message } from 'antd';
+import '../styles/Login.module.css';
 import { selectUser } from '../redux/selector';
 import { setUser } from '../redux/userSlice';
 
@@ -37,18 +40,19 @@ const NavBar = () => {
 
   return (
     <Menu
+      className="custom_menu"
       mode="horizontal"
       selectedKeys={[selectedKey]}
       style={{
         display: 'flex',
         justifyContent: 'center',
         borderBottom: 'none',
-        backgroundColor: '#003a8c', // fondo azul oscuro
-        color: '#ffffff', // texto blanco
+        backgroundColor: '#ffffff', // Cambiado a gris claro
+        color: '#000000', // Cambiado a negro
         paddingTop: '20px',
         paddingBottom: '20px',
       }}
-      theme="dark"
+      theme="light"
     >
       <Item key="/">
         <Link href="/">Inicio</Link>

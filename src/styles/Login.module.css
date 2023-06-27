@@ -10,3 +10,17 @@
     width: 300px;
   }
   
+  .degradadoGris {
+    background: linear-gradient(135deg, #232526, #414345);
+    height: 100%;
+    width: 100%;
+  }
+
+  .custom-menu.ant-menu-horizontal .ant-menu-item:hover {
+    color: blue;
+  }
+  .custom-menu.ant-menu-horizontal .ant-menu-item-selected {
+    color: blue;
+  }
+  
+  
