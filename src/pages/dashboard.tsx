@@ -1,34 +1,116 @@
+/* eslint-disable no-shadow */
+/* eslint-disable max-len */
+/* eslint-disable react/button-has-type */
 import {
-  Upload, Button, message, Table,
+  Upload, Button, message, Table, Input, Space, Modal,
 } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import {
+  DollarCircleOutlined, FileAddOutlined, UploadOutlined,
+} from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import {
-  collection, getDocs, query, where,
+  collection, doc, getDocs, onSnapshot, query, updateDoc, where,
 } from '@firebase/firestore';
-import { useEffect, useState } from 'react';
-import { uploadFile, db } from './api/controllers/firebase';
+import { useCallback, useEffect, useState } from 'react';
+import { uploadFile, db, uploadNonExcelFile } from './api/controllers/firebase';
 import { RootState } from '../redux/store';
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [uploadType, setUploadType] = useState('');
+  const [fileList, setFileList] = useState([]);
+  const [mftoNumber, setMftoNumber] = useState('');
   const { role } = useSelector((state: RootState) => state.user.usuario);
   const documento = useSelector((state: RootState) => state.user.usuario.usuario);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const q = query(collection(db, 'nombre_de_tu_colección'), where('DOCUMENTO', '==', documento));
-        const querySnapshot = await getDocs(q);
-        const newData = querySnapshot.docs.map((doc) => doc.data());
-        setData(newData);
-      } catch (error) {
-        message.error(`Error al cargar los datos: ${error}`);
-      }
-    };
+  const handleOpenModal = (type, mfto) => {
+    setMftoNumber(mfto);
+    setUploadType(type);
+    setUploadModalVisible(true);
+  };
 
+  const handleCloseModal = () => {
+    setUploadModalVisible(false);
+    setFileList([]);
+  };
+
+  const handleChange = (info) => {
+    setFileList(info.fileList);
+  };
+
+  const handleConfirmUpload = async () => {
+    try {
+      if (!fileList || !fileList.length) {
+        message.error('No se ha seleccionado ningún archivo para subir.');
+        return;
+      }
+
+      const file = fileList[0]?.originFileObj;
+      if (file) {
+        let fileUrl;
+        if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
+          fileUrl = await uploadFile(file);
+        } else {
+          fileUrl = await uploadNonExcelFile(file);
+        }
+
+        // Query the collection where 'MFTO' field matches the input 'mftoNumber'
+        const q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', mftoNumber));
+        const querySnapshot = await getDocs(q);
+
+        // If no such document exist, show error message
+        if (querySnapshot.empty) {
+          message.error(`No se encontró un documento con el número MFTO: ${mftoNumber}`);
+          return;
+        }
+
+        // Assuming 'MFTO' field is unique within the collection, use the first document
+        const docSnap = querySnapshot.docs[0];
+
+        // Update the document with new file url
+        await updateDoc(doc(db, 'nombre_de_tu_colección', docSnap.id), {
+          urlpago: uploadType === 'Imagen' ? fileUrl : docSnap.data().urlpago || null,
+          urlliquidacion: uploadType === 'PDF' ? fileUrl : docSnap.data().urlliquidacion || null,
+        });
+
+        message.success(`El archivo se cargó correctamente. URL del archivo: ${fileUrl}`);
+      }
+      handleCloseModal();
+    } catch (error) {
+      message.error(`Error al subir el archivo: ${error}`);
+    }
+  };
+
+  const fetchData = useCallback(async () => {
+    try {
+      let q;
+      if (role === 'admin') {
+        q = collection(db, 'nombre_de_tu_colección');
+      } else {
+        q = query(collection(db, 'nombre_de_tu_colección'), where('DOCUMENTO', '==', documento));
+      }
+
+      onSnapshot(q, (snapshot) => {
+        let newData = snapshot.docs.map((doc) => doc.data());
+        if (searchTerm) {
+          newData = newData.filter((item) => item.MFTO && item.MFTO.includes(searchTerm));
+        }
+        setData(newData);
+      });
+    } catch (error) {
+      message.error(`Error al cargar los datos: ${error}`);
+    }
+  }, [documento, role, searchTerm]);
+
+  useEffect(() => {
     fetchData();
-  }, [documento]);
+  }, [fetchData]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   const uploadProps = {
     name: 'file',
@@ -43,6 +125,16 @@ const Dashboard = () => {
       // Prevent the default upload behavior
       return false;
     },
+  };
+
+  const handleOpenLink = (url) => {
+    if (url) {
+      // Abre la url en una nueva pestaña
+      window.open(url, '_blank');
+    } else {
+      // Muestra un mensaje si la url no está disponible
+      message.error('La URL no está disponible');
+    }
   };
 
   const columns = [
@@ -90,18 +182,85 @@ const Dashboard = () => {
       title: 'FECHA CONSIGNACION SALDO',
       dataIndex: 'FECHA CONSIGNACION SALDO',
     },
+    {
+      title: 'Acciones',
+      key: 'acciones',
+      render: (text, record) => (
+        <Space size="middle">
+          <FileAddOutlined
+            onClick={() => {
+              handleOpenModal('PDF', record.MFTO);
+              // Aquí puedes agregar la funcionalidad para "Subir liquidación"
+            }}
+          />
+          <DollarCircleOutlined
+            onClick={() => {
+              handleOpenModal('Imagen', record.MFTO);
+              // Aquí puedes agregar la funcionalidad para "Subir pago"
+            }}
+          />
+        </Space>
+      ),
+    },
+    {
+      title: 'Ver Liquidación',
+      key: 'ver_liquidacion',
+      render: (text, record) => (
+        <button
+          style={{
+            border: 'none', background: 'none', color: '#1890ff', cursor: 'pointer',
+          }}
+          onClick={() => handleOpenLink(record.urlliquidacion)}
+        >
+          Ver Liquidación
+        </button>
+      ),
+    },
+    {
+      title: 'Ver Pago',
+      key: 'ver_pago',
+      render: (text, record) => (
+        <button
+          style={{
+            border: 'none', background: 'none', color: '#1890ff', cursor: 'pointer',
+          }}
+          onClick={() => handleOpenLink(record.urlpago)}
+        >
+          Ver Pago
+        </button>
+      ),
+    },
 
     // Añade aquí el resto de tus columnas...
   ];
 
   return (
     <>
+      <Input placeholder="MFTO Number" onChange={handleSearch} />
       {role === 'admin' && (
         <Upload {...uploadProps}>
           <Button icon={<UploadOutlined />}>Subir archivo Excel</Button>
         </Upload>
       )}
       <Table dataSource={data} columns={columns} />
+      <Modal
+        title={`Subir ${uploadType}`}
+        open={uploadModalVisible}
+        onCancel={handleCloseModal}
+        onOk={handleConfirmUpload}
+      >
+        <Upload
+          name="file"
+          accept={uploadType === 'PDF' ? '.pdf' : 'image/*'}
+          onChange={handleChange}
+          fileList={fileList}
+          listType="picture"
+        >
+          <Button>
+            Seleccionar archivo
+          </Button>
+        </Upload>
+      </Modal>
     </>
   );
 };

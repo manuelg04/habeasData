@@ -1,128 +1,46 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable max-len */
+// @ts-ignore
 import {
-  CarTwoTone, CheckCircleTwoTone, SecurityScanTwoTone, SettingTwoTone,
+  CarTwoTone, SecurityScanTwoTone, SettingTwoTone,
 } from '@ant-design/icons';
 import {
-  Typography, Card, Row, Col, Image,
+  Typography, Row, Col, Image,
 } from 'antd';
-import { useEffect, useRef } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { useSpring, animated } from 'react-spring';
+import styles from '../styles/Titles.module.css';
 
 const { Title, Paragraph } = Typography;
 
 const Index = () => {
-  const videoRef = useRef(null);
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play();
-    }
-  }, []);
+  const titleProps = useSpring({ opacity: 1, from: { opacity: 0 }, delay: 500 });
+  const textProps = useSpring({ opacity: 1, from: { opacity: 0 }, delay: 900 });
 
   return (
     <div className="p-8 bg-gray-200 min-h-screen">
-      <Title level={2} className="text-center text-blue-800" style={{ fontSize: '42px' }}>
-        TRANSPORTES MTM SERVICIOS TERCERIZADOS S.A.S.
-      </Title>
-      <Title level={3} className="text-center text-blue-800 mt-4">
-        Somos certificados y avalados por:
-      </Title>
-      <Row gutter={16} justify="center" align="middle" className="mt-4">
-        <Col>
-          <Image
-            src="/logobsc.jpg"
-            style={{ borderRadius: '10%' }}
-            width={200}
-          />
-        </Col>
-        <Col>
-          <Image
-            src="/mintransporte.jpg"
-            style={{ borderRadius: '10%' }}
-            width={200}
-          />
-        </Col>
-        <Col>
-          <Image
-            src="/supertransporte.jpg"
-            style={{ borderRadius: '10%' }}
-            width={200}
-          />
+      <animated.div style={titleProps}>
+        <Title level={2} className="text-center text-blue-800" style={{ fontSize: '42px' }}>
+          TRANSPORTES MTM SERVICIOS TERCERIZADOS S.A.S.
+        </Title>
+      </animated.div>
+      <Row gutter={16} className="mt-16 justify-content-center align-items-center">
+        <Col span={24} className="text-center">
+          <animated.div style={textProps}>
+            <Paragraph className={styles.paragraph}>
+              ¡Hemos renovado nuestra certificación por un año más! Estamos encantados de seguir ofreciendo un servicio de calidad.
+            </Paragraph>
+          </animated.div>
         </Col>
       </Row>
-      {/* Inserta el vídeo aquí */}
-      <Row gutter={16} justify="center" align="middle" className="mt-4">
-        <Col>
-          <video ref={videoRef} width="1000" height="300" muted loop>
-            <source src="banner.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </Col>
-      </Row>
-      <Row gutter={16} className="mt-8">
-        <Col span={12}>
-          <Card
-            title="Contamos con:"
-            bordered
-            className="mx-auto w-full h-full bg-blue-600 text-white border-4 border-blue-800 rounded-lg text-lg"
-            headStyle={{ color: 'white' }}
-            bodyStyle={{ overflowY: 'auto', height: '250px' }}
-          >
-            <Paragraph className="text-white text-xl leading-relaxed">
-              BASC -Business Alliance for Secure Commerce-, es una alianza empresarial internacional que promueve un comercio seguro en cooperación con gobiernos y organismos internacionales.
-            </Paragraph>
-
-            <ul className="text-white">
-              <li>
-                <CheckCircleTwoTone />
-                {' '}
-                PÓLIZAS de Mercancías y (RC) Responsabilidad Civil.
-              </li>
-              <li>
-                <CheckCircleTwoTone />
-                {' '}
-                SEGURIDAD 24/7 los 365 días del año.
-              </li>
-              <li>
-                <CheckCircleTwoTone />
-                {' '}
-                Mejoramiento Continuo.
-              </li>
-              <li>
-                <CheckCircleTwoTone />
-                {' '}
-                Calidad de Servicio
-              </li>
-              <li>
-                <CheckCircleTwoTone />
-                {' '}
-                Integridad Total
-              </li>
-              <li>
-                <CheckCircleTwoTone />
-                {' '}
-                Transparencia en todos nuestros procesos.
-              </li>
-              <li>
-                <CheckCircleTwoTone />
-                {' '}
-                Línea directa para servicio al cliente (607-6854599)
-              </li>
-            </ul>
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card
-            title="¿Quiénes Somos?"
-            bordered
-            className="mx-auto w-full h-full bg-blue-600 text-white border-4 border-blue-800 rounded-lg text-lg"
-            headStyle={{ color: 'white' }}
-          >
-            <Paragraph className="text-white text-xl leading-relaxed">
-              Somos una empresa 100% tercerizada ya que no contamos con flota propia, dedicada al transporte terrestre a nivel nacional de carga seca y a granel. Contando con una amplia gama de vehículos como: Turbos, Sencillos, Doble Troques, Patinetas, Tracto mulas, y Transportes Especial en Cama Bajas. Contando con sello de seguridad y confiabilidad en el mercado.
-            </Paragraph>
-          </Card>
+      <Row className="mt-8 justify-content-center align-items-center">
+        <Col span={24} style={{ display: 'flex', justifyContent: 'center' }}>
+          <Image src="BASC2023.jpg" alt="Certificado" width="30%" />
         </Col>
       </Row>
       <Row className="mt-16">
@@ -185,7 +103,48 @@ const Index = () => {
           </Paragraph>
         </Col>
       </Row>
+      <Row className="mt-16">
+        <Col span={24} className="text-center">
+          <Title level={3} className="text-blue-800">
+            NUESTROS CLIENTES
+          </Title>
+          <Slider
+            dots
+            infinite
+            speed={500}
+            slidesToShow={1}
+            slidesToScroll={1}
+            autoplay
+            autoplaySpeed={2000}
+            cssEase="linear"
+          >
+            <div>
+              <Image src="ternium.png" width={100} />
+            </div>
+            <div>
+              <Image src="pretecor.png" width={100} />
+            </div>
+            <div>
+              <Image src="femsa.png" width={100} />
+            </div>
+            <div>
+              <Image src="capri.jpg" width={100} />
+            </div>
+            <div>
+              <Image src="edinsa.jpg" width={100} />
+            </div>
+            <div>
+              <Image src="haifa.png" width={100} />
+            </div>
+            <div>
+              <Image src="diana.jpg" width={100} />
+            </div>
+          </Slider>
+        </Col>
+      </Row>
+
     </div>
+
   );
 };
 

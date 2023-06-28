@@ -21,6 +21,15 @@ const MyFooter = () => (
       <Col>
         <Image src="/logodefi.png" alt="Logo 1" width={100} height={100} />
       </Col>
+      <Col>
+        <Image src="/logobsc.jpg" alt="Logo 3" width={200} height={70} />
+      </Col>
+      <Col>
+        <Image src="/mintransporte.jpg" alt="Logo 4" width={200} height={50} />
+      </Col>
+      <Col>
+        <Image src="/supertransporte.jpg" alt="Logo 5" width={200} height={50} />
+      </Col>
     </Row>
     <Divider style={{ borderColor: '#fff' }} />
     <Title level={4} style={{ color: '#fff' }}>

@@ -58,3 +58,10 @@ export async function uploadFile(file) {
 
   return url;
 }
+
+export async function uploadNonExcelFile(file) {
+  const storageRef = ref(storage, v4());
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+  return url;
+}

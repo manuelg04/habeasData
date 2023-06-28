@@ -1,0 +1,22 @@
+.title {
+  font-size: 42px;
+  text-align: center;
+  color: #007BFF; /* un tono de azul */
+}
+
+.paragraph {
+  text-align: center;
+  font-size: 24px;
+}
+
+/* Estilos para las animaciones */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
