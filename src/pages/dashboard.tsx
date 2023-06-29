@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable react/button-has-type */
 import {
-  Upload, Button, message, Table, Input, Space, Modal,
+  Upload, Button, message, Table, Input, Space, Modal, Spin,
 } from 'antd';
 import {
   DollarCircleOutlined, FileAddOutlined, UploadOutlined,
@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadType, setUploadType] = useState('');
   const [fileList, setFileList] = useState([]);
   const [mftoNumber, setMftoNumber] = useState('');
@@ -46,12 +47,12 @@ const Dashboard = () => {
         message.error('No se ha seleccionado ningún archivo para subir.');
         return;
       }
-
       const file = fileList[0]?.originFileObj;
       if (file) {
         let fileUrl;
         if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
           fileUrl = await uploadFile(file);
+          setIsUploading(true);
         } else {
           fileUrl = await uploadNonExcelFile(file);
         }
@@ -79,6 +80,7 @@ const Dashboard = () => {
       }
       handleCloseModal();
     } catch (error) {
+      setIsUploading(false);
       message.error(`Error al subir el archivo: ${error}`);
     }
   };
@@ -140,7 +142,7 @@ const Dashboard = () => {
   const columns = [
     {
       title: 'Fecha Cargue',
-      dataIndex: 'Fecha Cargue',
+      dataIndex: 'FECHA DESPACHO',
     },
     {
       title: 'MFTO',
@@ -148,11 +150,11 @@ const Dashboard = () => {
     },
     {
       title: 'PLACA',
-      dataIndex: ' PLACA ',
+      dataIndex: 'PLACA',
     },
     {
       title: 'PROPIETARIO',
-      dataIndex: ' PROPIETARIO ',
+      dataIndex: 'PROPIETARIO/DOCUMENTO',
     },
     {
       title: 'FLETE PAGADO',
@@ -160,7 +162,7 @@ const Dashboard = () => {
     },
     {
       title: 'ANTICIPOS',
-      dataIndex: ' ANTICIPOS ',
+      dataIndex: 'ANTICIPOS ',
     },
     {
       title: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
@@ -176,7 +178,7 @@ const Dashboard = () => {
     },
     {
       title: 'VR. SALDO CANCELAR ',
-      dataIndex: ' VR. SALDO CANCELAR ',
+      dataIndex: 'VR. SALDO CANCELAR ',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',
@@ -239,7 +241,12 @@ const Dashboard = () => {
       <Input placeholder="MFTO Number" onChange={handleSearch} />
       {role === 'admin' && (
         <Upload {...uploadProps}>
-          <Button icon={<UploadOutlined />}>Subir archivo Excel</Button>
+          <Button>
+            <Spin spinning={isUploading}>
+              <UploadOutlined />
+              Subir archivo Excel
+            </Spin>
+          </Button>
         </Upload>
       )}
       <Table dataSource={data} columns={columns} />
