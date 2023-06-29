@@ -153,7 +153,7 @@ const Dashboard = () => {
       dataIndex: 'PLACA',
     },
     {
-      title: 'PROPIETARIO',
+      title: 'PROPIETARIO/DOCUMENTO',
       dataIndex: 'PROPIETARIO/DOCUMENTO',
     },
     {
@@ -177,8 +177,8 @@ const Dashboard = () => {
       dataIndex: 'FALTANTE / O DAÑO EN LA MERCANCIA',
     },
     {
-      title: 'VR. SALDO CANCELAR ',
-      dataIndex: 'VR. SALDO CANCELAR ',
+      title: 'VR. SALDO CANCELAR',
+      dataIndex: 'VR. SALDO CANCELAR',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',
