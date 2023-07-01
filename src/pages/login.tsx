@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import {
-  message, Form, Input, Button, Card, Typography, Alert,
+  message, Form, Input, Button, Card, Typography, Alert, Checkbox,
 } from 'antd';
 import {
   setUser,
@@ -15,6 +15,7 @@ import {
 export default function Login() {
   const [infouser, setInfoUser] = useState('');
   const [pass, setPass] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [registering, setRegistering] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch(); // obtén dispatch
@@ -150,8 +151,16 @@ export default function Login() {
                 />
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit" style={{ backgroundColor: 'blue' }}>
+                <Checkbox onChange={(e) => setTermsAccepted(e.target.checked)}>
+                  Al dar click en el botón de Registrarme, acepto los términos y condiciones de uso
+                </Checkbox>
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit" style={{ backgroundColor: 'lightblue' }} disabled={!termsAccepted}>
                   Registrarme
+                </Button>
+                <Button type="link" onClick={() => setRegistering(false)}>
+                  Cancelar
                 </Button>
               </Form.Item>
             </Form>

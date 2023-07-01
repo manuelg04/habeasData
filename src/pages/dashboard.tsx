@@ -5,7 +5,7 @@ import {
   Upload, Button, message, Table, Input, Space, Modal, Spin,
 } from 'antd';
 import {
-  DollarCircleOutlined, FileAddOutlined, UploadOutlined,
+  DollarCircleOutlined, FileAddOutlined, PlusOutlined, UploadOutlined,
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import {
@@ -20,11 +20,49 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [observationModalVisible, setObservationModalVisible] = useState(false);
+  const [observation, setObservation] = useState('');
   const [uploadType, setUploadType] = useState('');
   const [fileList, setFileList] = useState([]);
   const [mftoNumber, setMftoNumber] = useState('');
   const { role } = useSelector((state: RootState) => state.user.usuario);
   const documento = useSelector((state: RootState) => state.user.usuario.usuario);
+
+  const handleObservationChange = (e) => {
+    setObservation(e.target.value);
+  };
+
+  const handleAddObservation = (mfto) => {
+    setMftoNumber(mfto);
+    setObservationModalVisible(true);
+  };
+
+  const handleSaveObservation = async () => {
+    try {
+      // Query the collection where 'MFTO' field matches the input 'mftoNumber'
+      const q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', mftoNumber));
+      const querySnapshot = await getDocs(q);
+
+      // If no such document exist, show error message
+      if (querySnapshot.empty) {
+        message.error(`No se encontró un documento con el número MFTO: ${mftoNumber}`);
+        return;
+      }
+
+      // Assuming 'MFTO' field is unique within the collection, use the first document
+      const docSnap = querySnapshot.docs[0];
+
+      // Update the document with new observation
+      await updateDoc(doc(db, 'nombre_de_tu_colección', docSnap.id), {
+        observaciones: observation,
+      });
+
+      message.success(`Observation saved successfully for MFTO number: ${mftoNumber}`);
+      setObservationModalVisible(false);
+    } catch (error) {
+      message.error(`Error saving observation: ${error}`);
+    }
+  };
 
   const handleOpenModal = (type, mfto) => {
     setMftoNumber(mfto);
@@ -232,6 +270,19 @@ const Dashboard = () => {
         </button>
       ),
     },
+    {
+      title: 'Observaciones',
+      dataIndex: 'observaciones',
+      render: (text, record) => (
+        <Space size="middle">
+          {text}
+          <Button
+            onClick={() => handleAddObservation(record.MFTO)}
+            icon={<PlusOutlined />}
+          />
+        </Space>
+      ),
+    },
 
     // Añade aquí el resto de tus columnas...
   ];
@@ -268,6 +319,19 @@ const Dashboard = () => {
           </Button>
         </Upload>
       </Modal>
+      <Modal
+        title="Agregar observación"
+        open={observationModalVisible}
+        onCancel={() => setObservationModalVisible(false)}
+        onOk={handleSaveObservation}
+      >
+        <Input
+          placeholder="Observaciones"
+          value={observation}
+          onChange={handleObservationChange}
+        />
+      </Modal>
+
     </>
   );
 };
