@@ -129,14 +129,31 @@ const Dashboard = () => {
       if (role === 'admin') {
         q = collection(db, 'nombre_de_tu_colección');
       } else {
-        q = query(collection(db, 'nombre_de_tu_colección'), where('DOCUMENTO', '==', documento));
+        q = collection(db, 'nombre_de_tu_colección');
       }
 
       onSnapshot(q, (snapshot) => {
-        let newData = snapshot.docs.map((doc) => doc.data());
+        let newData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          // Check if "PROPIETARIO/DOCUMENTO" field exists
+          if (data['PROPIETARIO/DOCUMENTO']) {
+            // Split the field into separate "PROPIETARIO" and "DOCUMENTO" fields
+            const lastSpaceIndex = data['PROPIETARIO/DOCUMENTO'].lastIndexOf(' ');
+            data.PROPIETARIO = data['PROPIETARIO/DOCUMENTO'].substring(0, lastSpaceIndex);
+            data.DOCUMENTO = data['PROPIETARIO/DOCUMENTO'].substring(lastSpaceIndex + 1);
+          }
+          return data;
+        });
+
         if (searchTerm) {
           newData = newData.filter((item) => item.MFTO && item.MFTO.includes(searchTerm));
         }
+
+        // Filter by documento
+        if (role !== 'admin') {
+          newData = newData.filter((item) => item.DOCUMENTO === documento);
+        }
+
         setData(newData);
       });
     } catch (error) {
@@ -323,6 +340,7 @@ const Dashboard = () => {
         title="Agregar observación"
         open={observationModalVisible}
         onCancel={() => setObservationModalVisible(false)}
+        okButtonProps={{ style: { backgroundColor: 'blue', borderColor: 'blue', color: 'white' } }} // Aquí se añade el estilo
         onOk={handleSaveObservation}
       >
         <Input

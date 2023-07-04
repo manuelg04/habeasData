@@ -15,19 +15,16 @@ const MyFooter = () => (
   }}
   >
     <Row justify="center" gutter={[16, 16]} align="middle">
-      <Col>
-        <Image src="/mintransporte-logo.png" alt="Logo 2" width={200} height={50} />
-      </Col>
-      <Col>
+      <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '55px 0' }}>
         <Image src="/logodefi.png" alt="Logo 1" width={100} height={100} />
       </Col>
-      <Col>
+      <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '10px 0' }}>
         <Image src="/logobsc.jpg" alt="Logo 3" width={200} height={70} />
       </Col>
-      <Col>
+      <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '10px 0' }}>
         <Image src="/mintransporte.jpg" alt="Logo 4" width={200} height={50} />
       </Col>
-      <Col>
+      <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '10px 0' }}>
         <Image src="/supertransporte.jpg" alt="Logo 5" width={200} height={50} />
       </Col>
     </Row>
