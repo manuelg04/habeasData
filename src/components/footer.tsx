@@ -1,7 +1,6 @@
 import {
-  Layout, Row, Col, Typography, Divider,
+  Layout, Row, Typography, Divider,
 } from 'antd';
-import Image from 'next/image';
 
 const { Footer } = Layout;
 const { Title, Text } = Typography;
@@ -15,10 +14,10 @@ const MyFooter = () => (
   }}
   >
     <Row justify="center" gutter={[16, 16]} align="middle">
-      <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '55px 0' }}>
+      {/* <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '55px 0' }}>
         <Image src="/logodefi.png" alt="Logo 1" width={100} height={100} />
-      </Col>
-      <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '10px 0' }}>
+      </Col> */}
+      {/* <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '10px 0' }}>
         <Image src="/logobsc.jpg" alt="Logo 3" width={200} height={70} />
       </Col>
       <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '10px 0' }}>
@@ -26,7 +25,7 @@ const MyFooter = () => (
       </Col>
       <Col xs={24} sm={12} md={8} lg={4} style={{ margin: '10px 0' }}>
         <Image src="/supertransporte.jpg" alt="Logo 5" width={200} height={50} />
-      </Col>
+      </Col> */}
     </Row>
     <Divider style={{ borderColor: '#fff' }} />
     <Title level={4} style={{ color: '#fff' }}>

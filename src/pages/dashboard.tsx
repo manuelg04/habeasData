@@ -129,31 +129,14 @@ const Dashboard = () => {
       if (role === 'admin') {
         q = collection(db, 'nombre_de_tu_colección');
       } else {
-        q = collection(db, 'nombre_de_tu_colección');
+        q = query(collection(db, 'nombre_de_tu_colección'), where('DOCUMENTO', '==', documento));
       }
 
       onSnapshot(q, (snapshot) => {
-        let newData = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          // Check if "PROPIETARIO/DOCUMENTO" field exists
-          if (data['PROPIETARIO/DOCUMENTO']) {
-            // Split the field into separate "PROPIETARIO" and "DOCUMENTO" fields
-            const lastSpaceIndex = data['PROPIETARIO/DOCUMENTO'].lastIndexOf(' ');
-            data.PROPIETARIO = data['PROPIETARIO/DOCUMENTO'].substring(0, lastSpaceIndex);
-            data.DOCUMENTO = data['PROPIETARIO/DOCUMENTO'].substring(lastSpaceIndex + 1);
-          }
-          return data;
-        });
-
+        let newData = snapshot.docs.map((doc) => doc.data());
         if (searchTerm) {
           newData = newData.filter((item) => item.MFTO && item.MFTO.includes(searchTerm));
         }
-
-        // Filter by documento
-        if (role !== 'admin') {
-          newData = newData.filter((item) => item.DOCUMENTO === documento);
-        }
-
         setData(newData);
       });
     } catch (error) {
@@ -197,7 +180,7 @@ const Dashboard = () => {
   const columns = [
     {
       title: 'Fecha Cargue',
-      dataIndex: 'FECHA DESPACHO',
+      dataIndex: 'Fecha Despacho',
     },
     {
       title: 'MFTO',
@@ -208,8 +191,12 @@ const Dashboard = () => {
       dataIndex: 'PLACA',
     },
     {
-      title: 'PROPIETARIO/DOCUMENTO',
-      dataIndex: 'PROPIETARIO/DOCUMENTO',
+      title: 'PROPIETARIO',
+      dataIndex: 'PROPIETARIO',
+    },
+    {
+      title: 'DOCUMENTO',
+      dataIndex: 'DOCUMENTO',
     },
     {
       title: 'FLETE PAGADO',
@@ -217,7 +204,7 @@ const Dashboard = () => {
     },
     {
       title: 'ANTICIPOS',
-      dataIndex: 'ANTICIPOS ',
+      dataIndex: 'ANTICIPOS',
     },
     {
       title: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
@@ -233,7 +220,7 @@ const Dashboard = () => {
     },
     {
       title: 'VR. SALDO CANCELAR',
-      dataIndex: 'VR. SALDO CANCELAR',
+      dataIndex: ' VR. SALDO CANCELAR ',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',
