@@ -212,6 +212,7 @@ export default function FormularioHabeasData() {
             onCancel={handleVerify}
             cancelText="Cancelar"
             okText="Enviar"
+            okButtonProps={{ style: { backgroundColor: 'blue', borderColor: 'blue', color: 'white' } }}
           >
             <p>
               Nombre completo:
