@@ -27,17 +27,20 @@ const NavBar = () => {
   const user = useSelector(selectUser);
   const isLoggedIn = Boolean(user.token);
   const handleLogout = async () => {
-    try {
-      await axios.post('/api/middlewares/auth/logout');
-      dispatch(setUser({
-        id: '', usuario: '', role: '', token: '',
-      }));
-      router.push('/login');
-    } catch (error) {
-      message.error('Error al cerrar sesión');
+    if (isLoggedIn) {
+      try {
+        await axios.post('/api/middlewares/auth/logout');
+        dispatch(setUser({
+          id: '', usuario: '', role: '', token: '',
+        }));
+        message.success('Logout successful');
+      } catch (error) {
+        message.error('Error al cerrar sesión');
+      }
     }
+    // Si no hay un token, solo redirige al usuario al login
+    router.push('/login');
   };
-
   return (
     <Menu
       className="custom_menu"
