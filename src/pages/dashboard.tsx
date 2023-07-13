@@ -280,10 +280,12 @@ const Dashboard = () => {
       render: (text, record) => (
         <Space size="middle">
           {text}
+          {role === 'admin' && (
           <Button
             onClick={() => handleAddObservation(record.MFTO)}
             icon={<PlusOutlined />}
           />
+          )}
         </Space>
       ),
     },
