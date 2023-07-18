@@ -13,7 +13,14 @@ const { Title } = Typography;
 export default function FormularioHabeasData() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-  const [formValues, setFormValues] = useState<Usuario>({});
+  const [formValues, setFormValues] = useState<Usuario>({
+    nombre: '',
+    cedula: '',
+    celular: '',
+    correo: '',
+    acepto: false,
+    autorizo: false,
+  });
   const [form] = Form.useForm();
 
   const showModal = () => {
