@@ -94,6 +94,7 @@ export default function FormularioHabeasData() {
       celular: values.celular,
       correo: values.correo,
       acepto: values.acepto,
+      autorizo: values.autorizo,
     };
 
     setFormValues(data);
@@ -234,6 +235,12 @@ export default function FormularioHabeasData() {
               {' '}
               {formValues.correo}
             </p>
+            <p>
+              Autorización a tomas de pruebas de alcoholemia y control antidoping:
+              {' '}
+              {formValues.autorizo ? 'Sí' : 'No'}
+              {' '}
+            </p>
           </Modal>
 
           <Form.Item>
@@ -254,6 +261,20 @@ export default function FormularioHabeasData() {
                 <Button type="text" onClick={showModal} style={{ color: 'blue' }}>políticas de protección de datos personales</Button>
               </Checkbox>
             </Form.Item>
+          </Form.Item>
+          <Form.Item
+            name="autorizo"
+            valuePropName="checked"
+            style={{ marginBottom: '1em' }}
+            rules={[
+              {
+                validator: (_, value) => (value ? Promise.resolve() : Promise.reject(new Error('Debes autorizar la toma de pruebas de alcoholemia y control antidoping'))),
+              },
+            ]}
+          >
+            <Checkbox>
+              Autorización a tomas de pruebas de alcoholemia y control antidoping
+            </Checkbox>
           </Form.Item>
           <Form.Item>
             <Button

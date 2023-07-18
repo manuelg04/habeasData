@@ -5,4 +5,5 @@ export type Usuario = {
     celular?: string;
     correo?: string;
     acepto?: boolean;
+    autorizo: boolean;
 };
