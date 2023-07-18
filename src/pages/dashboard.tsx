@@ -220,7 +220,7 @@ const Dashboard = () => {
     },
     {
       title: 'VR. SALDO CANCELAR',
-      dataIndex: ' VR. SALDO CANCELAR ',
+      dataIndex: 'VR. SALDO CANCELAR',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',
