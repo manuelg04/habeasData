@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable max-len */
 /* eslint-disable no-console */
 /* eslint-disable no-shadow */
@@ -13,7 +15,10 @@ import { v4 } from 'uuid';
 import {
   addDoc,
   collection,
+  getDocs,
   getFirestore,
+  query,
+  where,
 } from 'firebase/firestore';
 import { utils, read } from 'xlsx';
 
@@ -31,21 +36,37 @@ const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const db = getFirestore(app);
 
-export async function processExcel(file) {
-  const response = await fetch(file); // obtén el archivo de excel desde la URL
-  const arrayBuffer = await response.arrayBuffer(); // convierte el archivo en arrayBuffer
-  const data = new Uint8Array(arrayBuffer);
-  const workbook = read(data, { type: 'array' }); // lee el archivo de excel
-  const worksheet = workbook.Sheets[workbook.SheetNames[0]]; // selecciona la primera hoja
+interface RowData {
+  MFTO: string;
+  PLACA: string;
+  PROPIETARIO: string;
+}
 
-  // Convierte el archivo de excel en un objeto JSON
+
+export async function processExcel(file) {
+  const response = await fetch(file);
+  const arrayBuffer = await response.arrayBuffer();
+  const data = new Uint8Array(arrayBuffer);
+  const workbook = read(data, { type: 'array' });
+  const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
   const jsonData = utils.sheet_to_json(worksheet, { raw: false });
 
-  // Luego, puedes almacenar jsonData en Firestore. Asegúrate de tener la estructura correcta de acuerdo con tus necesidades
   const collectionRef = collection(db, 'nombre_de_tu_colección');
-  jsonData.forEach(async (row) => {
-    await addDoc(collectionRef, row);
-  });
+
+  // Recorre cada fila del archivo Excel
+  for (const row of jsonData as RowData[]) {
+    // Verifica si ya existe un documento con el mismo MFTO
+    const q = query(collectionRef, where('MFTO', '==', row.MFTO));
+    const querySnapshot = await getDocs(q);
+
+    // Si no existe, lo inserta
+    if (querySnapshot.empty) {
+      await addDoc(collectionRef, row);
+    } else {
+      console.log(`Ya existe un documento con MFTO: ${row.MFTO}. Se omite la inserción.`);
+    }
+  }
 }
 
 export async function uploadFile(file) {
