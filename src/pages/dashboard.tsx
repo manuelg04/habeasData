@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [uploadType, setUploadType] = useState('');
   const [fileList, setFileList] = useState([]);
   const [mftoNumber, setMftoNumber] = useState('');
+  const [searchPlaca, setSearchPlaca] = useState('');
   const { role } = useSelector((state: RootState) => state.user.usuario);
   const documento = useSelector((state: RootState) => state.user.usuario.usuario);
 
@@ -137,12 +138,15 @@ const Dashboard = () => {
         if (searchTerm) {
           newData = newData.filter((item) => item.MFTO && item.MFTO.includes(searchTerm));
         }
+        if (searchPlaca) {
+          newData = newData.filter((item) => item.PLACA && item.PLACA.includes(searchPlaca));
+        }
         setData(newData);
       });
     } catch (error) {
       message.error(`Error al cargar los datos: ${error}`);
     }
-  }, [documento, role, searchTerm]);
+  }, [documento, role, searchTerm, searchPlaca]);
 
   useEffect(() => {
     fetchData();
@@ -296,6 +300,7 @@ const Dashboard = () => {
   return (
     <>
       <Input placeholder="MFTO Number" onChange={handleSearch} />
+      <Input placeholder="PLACA" onChange={(e) => setSearchPlaca(e.target.value)} />
       {role === 'admin' && (
         <Upload {...uploadProps}>
           <Button>
