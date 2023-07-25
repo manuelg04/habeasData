@@ -42,7 +42,6 @@ interface RowData {
   PROPIETARIO: string;
 }
 
-
 export async function processExcel(file) {
   const response = await fetch(file);
   const arrayBuffer = await response.arrayBuffer();
