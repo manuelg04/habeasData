@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import {
-  message, Form, Input, Button, Card, Typography, Alert, Checkbox,
+  message, Form, Input, Button, Card, Typography, Alert, Checkbox, DatePicker,
 } from 'antd';
 import {
   setUser,
@@ -17,6 +17,9 @@ export default function Login() {
   const [pass, setPass] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [registering, setRegistering] = useState(false);
+  const [expeditionDate, setExpeditionDate] = useState(null);
+  const [email, setEmail] = useState('');
+  const [ownerName, setOwnerName] = useState('');
   const router = useRouter();
   const dispatch = useDispatch(); // obtén dispatch
 
@@ -43,12 +46,20 @@ export default function Login() {
 
   const handleSubmitRegister = async () => {
     try {
-      await axios.post('/api/middlewares/auth/register', { usuario: infouser, pass });
+      await axios.post('/api/middlewares/auth/register', {
+        usuario: infouser,
+        pass,
+        nombre: ownerName,
+        email,
+        fecha_expedicioncc: expeditionDate,
+      });
 
       // Redirige al usuario al inicio de sesión luego de registrarse
       setRegistering(false);
     } catch (error) {
-      message.error('Error al registrar el usuario');
+      if (error.response && error.response.status === 400) {
+        message.error('Usuario ya registrado, por favor inicie sesión');
+      }
     }
   };
 
@@ -140,6 +151,34 @@ export default function Login() {
               <Typography.Paragraph type="secondary">
                 Señor usuario recuerde que el campo de Documento solo admite Numeros
               </Typography.Paragraph>
+              <Form.Item>
+                <DatePicker
+                  format="YYYY-MM-DD"
+                  placeholder="Fecha de expedición"
+                  onChange={(date, dateString) => setExpeditionDate(dateString)}
+                  aria-required
+                />
+              </Form.Item>
+
+              {/* Campo de Correo electrónico */}
+              <Form.Item>
+                <Input
+                  type="email"
+                  placeholder="Correo Electrónico"
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </Form.Item>
+
+              {/* Campo de Nombre Propietario */}
+              <Form.Item>
+                <Input
+                  type="text"
+                  placeholder="Nombre Propietario"
+                  onChange={(e) => setOwnerName(e.target.value)}
+                  required
+                />
+              </Form.Item>
 
               <Form.Item>
                 <Input.Password

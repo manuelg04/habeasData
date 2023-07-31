@@ -1,9 +1,12 @@
+/* eslint-disable camelcase */
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
 import db from '../../../../db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { usuario, pass } = req.body;
+  const {
+    usuario, pass, nombre, email, fecha_expedicioncc,
+  } = req.body;
   try {
     // Verifica si el usuario ya existe
     const [existingUsers] = await db.query('SELECT * FROM usuarios WHERE usuario = ?', [usuario]);
@@ -17,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const hashedPassword = await bcrypt.hash(pass, 10);
 
     // Ahora inserta el usuario con la contraseña cifrada en la base de datos
-    await db.query('INSERT INTO usuarios (usuario, pass, role) VALUES (?, ?, ?)', [usuario, hashedPassword, 'normaluser']);
+    await db.query('INSERT INTO usuarios (usuario, pass, nombre, email, fecha_expedicioncc, role) VALUES (?, ?, ?, ?, ?, ?)', [usuario, hashedPassword, nombre, email, fecha_expedicioncc, 'normaluser']);
 
     return res.status(201).json({ message: 'Usuario creado exitosamente' });
   } catch (error) {

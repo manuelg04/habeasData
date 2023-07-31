@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable max-len */
@@ -18,6 +19,7 @@ import {
   getDocs,
   getFirestore,
   query,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { utils, read } from 'xlsx';
@@ -36,7 +38,7 @@ const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const db = getFirestore(app);
 
-interface RowData {
+type RowData = {
   MFTO: string;
   PLACA: string;
   PROPIETARIO: string;
@@ -84,4 +86,44 @@ export async function uploadNonExcelFile(file) {
   await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
   return url;
+}
+
+export async function uploadAndAssignFile(file) {
+  // Extraer el MFTO y el tipo del nombre del archivo
+  const fileName = file.name.split('.').slice(0, -1).join('.'); // Obtén el nombre del archivo sin la extensión
+  let MFTO;
+  let type;
+
+  if (fileName.includes('_liquidacion')) {
+    MFTO = fileName.split('_')[0];
+    type = 'liquidacion';
+  } else {
+    MFTO = fileName;
+    type = 'pago';
+  }
+
+  // subir el archivo a Firebase Storage
+  const url = await uploadNonExcelFile(file);
+
+  // referencia a la colección
+  const collectionRef = collection(db, 'nombre_de_tu_colección');
+
+  // Obtén el documento con el MFTO correspondiente
+  const q = query(collectionRef, where('MFTO', '==', MFTO));
+  const querySnapshot = await getDocs(q);
+
+  // Verifica si el documento existe
+  if (querySnapshot.empty) {
+    console.log(`No se encontró ningún documento con el MFTO ${MFTO}`);
+    return;
+  }
+
+  // Si el documento existe, obtén su referencia y actualiza la url
+  const docRef = querySnapshot.docs[0].ref;
+
+  if (type === 'pago') {
+    await updateDoc(docRef, { urlpago: url });
+  } else if (type === 'liquidacion') {
+    await updateDoc(docRef, { urlliquidacion: url });
+  }
 }

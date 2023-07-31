@@ -151,6 +151,7 @@ export default function FormularioHabeasData() {
             label="Fecha y Hora"
             name="fecha"
             style={{ marginBottom: '3em' }}
+            hidden
           >
             <Row gutter={{
               xs: 8, sm: 16, md: 24, lg: 32,
