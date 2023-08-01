@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-plusplus */
@@ -296,7 +297,7 @@ const Dashboard = () => {
     },
     {
       title: 'VR. SALDO CANCELAR',
-      dataIndex: 'VR. SALDO CANCELAR',
+      dataIndex: ' VR. SALDO CANCELAR ',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',

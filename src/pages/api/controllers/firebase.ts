@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
@@ -16,6 +17,7 @@ import { v4 } from 'uuid';
 import {
   addDoc,
   collection,
+  doc,
   getDocs,
   getFirestore,
   query,
@@ -57,15 +59,32 @@ export async function processExcel(file) {
 
   // Recorre cada fila del archivo Excel
   for (const row of jsonData as RowData[]) {
+    console.log('Row data:', row);
     // Verifica si ya existe un documento con el mismo MFTO
     const q = query(collectionRef, where('MFTO', '==', row.MFTO));
     const querySnapshot = await getDocs(q);
 
     // Si no existe, lo inserta
     if (querySnapshot.empty) {
+      console.log('Inserting row:', row);
       await addDoc(collectionRef, row);
     } else {
-      console.log(`Ya existe un documento con MFTO: ${row.MFTO}. Se omite la inserción.`);
+      // Existe un documento, verifica si algún campo ha cambiado
+      querySnapshot.forEach((queryDocumentSnapshot) => {
+        const existingData = queryDocumentSnapshot.data();
+        console.log('Existing data:', existingData);
+        const changes = {};
+        Object.keys(row).forEach((key) => {
+          if (row[key] !== existingData[key]) {
+            console.log('Field has changed:', key, 'old:', existingData[key], 'new:', row[key]);
+            changes[key] = row[key];
+          }
+        });
+        if (Object.keys(changes).length > 0) {
+          console.log('Updating doc with changes:', changes);
+          updateDoc(doc(db, 'nombre_de_tu_colección', queryDocumentSnapshot.id), changes);
+        }
+      });
     }
   }
 }
