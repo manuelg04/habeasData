@@ -275,10 +275,6 @@ const Dashboard = () => {
 
   const columns = [
     {
-      title: 'id',
-      dataIndex: 'Document ID',
-    },
-    {
       title: 'Fecha Cargue',
       dataIndex: 'Fecha Despacho',
     },
@@ -449,7 +445,6 @@ const Dashboard = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <>
       <Input placeholder="MFTO" onChange={(e) => setSearchTerm(e.target.value)} />
@@ -496,6 +491,9 @@ const Dashboard = () => {
           >
             <Form.Item hidden label="id" name="id" rules={[{ required: true, message: 'Por favor ingresa el MFTO.' }]}>
               <Input hidden />
+            </Form.Item>
+            <Form.Item label="Fecha Despacho" name="Fecha Despacho" rules={[{ required: true, message: 'Por favor ingresa la fecha despacho.' }]}>
+              <Input disabled />
             </Form.Item>
             <Form.Item label="MFTO" name="MFTO" rules={[{ required: true, message: 'Por favor ingresa el MFTO.' }]}>
               <Input disabled />
