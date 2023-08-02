@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-lonely-if */
@@ -7,15 +9,15 @@
 /* eslint-disable max-len */
 /* eslint-disable react/button-has-type */
 import {
-  Upload, Button, message, Table, Input, Space, Modal, Spin, Popconfirm, Pagination,
+  Upload, Button, message, Table, Input, Space, Modal, Spin, Popconfirm, Pagination, Form,
 } from 'antd';
 import {
   DeleteOutlined,
-  DollarCircleOutlined, ExclamationCircleOutlined, FileAddOutlined, PlusOutlined, UploadOutlined,
+  DollarCircleOutlined, EditOutlined, ExclamationCircleOutlined, FileAddOutlined, PlusOutlined, UploadOutlined,
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import {
-  collection, doc, getDocs, limit, orderBy, query, startAfter, updateDoc, where, getCountFromServer,
+  collection, doc, getDocs, limit, orderBy, query, startAfter, updateDoc, where, getCountFromServer, deleteDoc, setDoc,
 } from '@firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
@@ -45,7 +47,15 @@ const Dashboard = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [updatedRecord, setUpdatedRecord] = useState({ ...selectedRecord }); // Crea un nuevo estado para manejar los cambios
+
   const PAGESIZE = 10;
+  const handleInputChange = (e, field) => {
+    setUpdatedRecord({ ...updatedRecord, [field]: e.target.value });
+  };
+
   const handleObservationChange = (e) => {
     setObservation(e.target.value);
   };
@@ -232,21 +242,34 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteRecord = async (mfto) => {
+  const handleDeleteRecord = async (id) => {
     try {
-      // Query the collection where 'MFTO' field matches the input 'mftoNumber'
-      const q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', mfto));
-      const querySnapshot = await getDocs(q);
-
-      // If no such document exist, show error message
-      if (querySnapshot.empty) {
-        message.error(`No se encontró un documento con el número MFTO: ${mfto}`);
-        return;
-      }
-
-      message.success(`El registro con MFTO ${mfto} fue eliminado correctamente.`);
+      await deleteDoc(doc(db, 'nombre_de_tu_colección', id));
+      message.success(`El registro con el ID ${id} fue eliminado correctamente.`);
     } catch (error) {
       message.error(`Error al eliminar el registro: ${error}`);
+    }
+  };
+
+  const handleOpenModalForEdit = (id) => {
+    const record = data.find((item) => item.id === id);
+    setEditModalVisible(true);
+    setSelectedRecord(record);
+    setUpdatedRecord(record); // Llenar "updatedRecord" con los datos actuales
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalVisible(false);
+    setSelectedRecord(null);
+  };
+  const handleSaveChanges = async () => {
+    try {
+      await setDoc(doc(db, 'nombre_de_tu_colección', selectedRecord.id), updatedRecord);
+      message.success('Registro actualizado correctamente.');
+      handleCloseEditModal();
+      fetchData();
+    } catch (error) {
+      message.error(`Error al actualizar el registro: ${error}`);
     }
   };
 
@@ -320,10 +343,17 @@ const Dashboard = () => {
               // Aquí puedes agregar la funcionalidad para "Subir pago"
             }}
           />
+          <EditOutlined
+            onClick={() => {
+              handleOpenModalForEdit(record.id);
+            }}
+          />
           <Popconfirm
-            title={`¿Estás seguro de eliminar el registro con MFTO ${record.MFTO}?`}
+            title={`¿Estás seguro de eliminar el registro con id ${record.id}?`}
             icon={<ExclamationCircleOutlined style={{ color: 'red' }} />}
-            onConfirm={() => handleDeleteRecord(record.MFTO)}
+            onConfirm={() => {
+              handleDeleteRecord(record.id);
+            }}
             onCancel={() => ('Cancelado')}
             okText="Sí"
             cancelText="No"
@@ -456,6 +486,57 @@ const Dashboard = () => {
           fetchData(true);
         }}
       />
+      <Modal title="Editar Registro" open={editModalVisible} onOk={handleSaveChanges} onCancel={handleCloseEditModal}>
+        {updatedRecord ? (
+          <Form>
+            <Form.Item label="MFTO">
+              <Input value={updatedRecord.MFTO} onChange={(e) => handleInputChange(e, 'MFTO')} />
+            </Form.Item>
+
+            <Form.Item label="PLACA">
+              <Input value={updatedRecord.PLACA} onChange={(e) => handleInputChange(e, 'PLACA')} />
+            </Form.Item>
+
+            <Form.Item label="PROPIETARIO">
+              <Input value={updatedRecord.PROPIETARIO} onChange={(e) => handleInputChange(e, 'PROPIETARIO')} />
+            </Form.Item>
+
+            <Form.Item label="DOCUMENTO">
+              <Input value={updatedRecord.DOCUMENTO} onChange={(e) => handleInputChange(e, 'DOCUMENTO')} />
+            </Form.Item>
+
+            <Form.Item label="FLETE PAGADO">
+              <Input value={updatedRecord['FLETE PAGADO']} onChange={(e) => handleInputChange(e, 'FLETE PAGADO')} />
+            </Form.Item>
+
+            <Form.Item label="ANTICIPOS">
+              <Input value={updatedRecord.ANTICIPOS} onChange={(e) => handleInputChange(e, 'ANTICIPOS')} />
+            </Form.Item>
+
+            <Form.Item label="RETENCIONES ICA 5*1000 / FUENTE 1%">
+              <Input value={updatedRecord['RETENCIONES ICA 5*1000 / FUENTE 1%']} onChange={(e) => handleInputChange(e, 'RETENCIONES ICA 5*1000 / FUENTE 1%')} />
+            </Form.Item>
+
+            <Form.Item label="POLIZA / ESTAMPILLA">
+              <Input value={updatedRecord['POLIZA / ESTAMPILLA']} onChange={(e) => handleInputChange(e, 'POLIZA / ESTAMPILLA')} />
+            </Form.Item>
+
+            <Form.Item label="FALTANTE / O DAÑO EN LA MERCANCIA">
+              <Input value={updatedRecord['FALTANTE / O DAÑO EN LA MERCANCIA']} onChange={(e) => handleInputChange(e, 'FALTANTE / O DAÑO EN LA MERCANCIA')} />
+            </Form.Item>
+
+            <Form.Item label="VR. SALDO CANCELAR">
+              <Input value={updatedRecord['VR. SALDO CANCELAR']} onChange={(e) => handleInputChange(e, 'VR. SALDO CANCELAR')} />
+            </Form.Item>
+
+            <Form.Item label="FECHA CONSIGNACION SALDO">
+              <Input value={updatedRecord['FECHA CONSIGNACION SALDO']} onChange={(e) => handleInputChange(e, 'FECHA CONSIGNACION SALDO')} />
+            </Form.Item>
+
+          </Form>
+        ) : null}
+      </Modal>
+
       <Modal
         title={`Subir ${uploadType}`}
         open={uploadModalVisible}

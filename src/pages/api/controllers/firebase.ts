@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-useless-escape */
+/* eslint-disable quote-props */
 /* eslint-disable no-loop-func */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-await-in-loop */
@@ -17,7 +21,6 @@ import { v4 } from 'uuid';
 import {
   addDoc,
   collection,
-  doc,
   getDocs,
   getFirestore,
   query,
@@ -40,12 +43,6 @@ const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const db = getFirestore(app);
 
-type RowData = {
-  MFTO: string;
-  PLACA: string;
-  PROPIETARIO: string;
-}
-
 export async function processExcel(file) {
   const response = await fetch(file);
   const arrayBuffer = await response.arrayBuffer();
@@ -54,39 +51,20 @@ export async function processExcel(file) {
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
   const jsonData = utils.sheet_to_json(worksheet, { raw: false });
-
-  const collectionRef = collection(db, 'nombre_de_tu_colección');
-
-  // Recorre cada fila del archivo Excel
-  for (const row of jsonData as RowData[]) {
-    console.log('Row data:', row);
-    // Verifica si ya existe un documento con el mismo MFTO
-    const q = query(collectionRef, where('MFTO', '==', row.MFTO));
+  const checkIfExists = async (manifiesto) => {
+    const q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', manifiesto));
     const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  };
 
-    // Si no existe, lo inserta
-    if (querySnapshot.empty) {
-      console.log('Inserting row:', row);
-      await addDoc(collectionRef, row);
+  jsonData.forEach(async (obj:any, index) => {
+    const existe = await checkIfExists(obj.MFTO);
+    if (existe) {
+      console.error('El MFTO ya existe en la base de datos');
     } else {
-      // Existe un documento, verifica si algún campo ha cambiado
-      querySnapshot.forEach((queryDocumentSnapshot) => {
-        const existingData = queryDocumentSnapshot.data();
-        console.log('Existing data:', existingData);
-        const changes = {};
-        Object.keys(row).forEach((key) => {
-          if (row[key] !== existingData[key]) {
-            console.log('Field has changed:', key, 'old:', existingData[key], 'new:', row[key]);
-            changes[key] = row[key];
-          }
-        });
-        if (Object.keys(changes).length > 0) {
-          console.log('Updating doc with changes:', changes);
-          updateDoc(doc(db, 'nombre_de_tu_colección', queryDocumentSnapshot.id), changes);
-        }
-      });
+      await addDoc(collection(db, 'nombre_de_tu_colección'), obj);
     }
-  }
+  });
 }
 
 export async function uploadFile(file) {
