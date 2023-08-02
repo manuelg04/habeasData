@@ -9,7 +9,7 @@
 /* eslint-disable max-len */
 /* eslint-disable react/button-has-type */
 import {
-  Upload, Button, message, Table, Input, Space, Modal, Spin, Popconfirm, Pagination, Form,
+  Upload, Button, message, Table, Input, Space, Modal, Spin, Popconfirm, Pagination, Form, DatePicker,
 } from 'antd';
 import {
   DeleteOutlined,
@@ -50,7 +50,7 @@ const Dashboard = () => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [updatedRecord, setUpdatedRecord] = useState({ ...selectedRecord }); // Crea un nuevo estado para manejar los cambios
-
+  const [form] = Form.useForm();
   const PAGESIZE = 10;
   const handleInputChange = (e, field) => {
     setUpdatedRecord({ ...updatedRecord, [field]: e.target.value });
@@ -166,7 +166,6 @@ const Dashboard = () => {
       } else {
         q = query(collection(db, 'nombre_de_tu_colección'), where('DOCUMENTO', '==', documento), orderBy('MFTO'), limit(PAGESIZE));
       }
-
       if (mfto !== '') {
         q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', mfto));
       } else if (placa !== '') {
@@ -263,14 +262,15 @@ const Dashboard = () => {
     setSelectedRecord(null);
   };
   const handleSaveChanges = async () => {
+    const values = form.getFieldsValue();
     try {
-      await setDoc(doc(db, 'nombre_de_tu_colección', selectedRecord.id), updatedRecord);
-      message.success('Registro actualizado correctamente.');
-      handleCloseEditModal();
-      fetchData();
+      const docRef = doc(db, 'nombre_de_tu_colección', values.id);
+      await updateDoc(docRef, values);
+      message.success('Registro actualizado exitosamente');
     } catch (error) {
-      message.error(`Error al actualizar el registro: ${error}`);
+      message.error('Error al actualizar el registro');
     }
+    setEditModalVisible(false);
   };
 
   const columns = [
@@ -409,7 +409,6 @@ const Dashboard = () => {
 
     // Añade aquí el resto de tus columnas...
   ];
-
   const onFileChange = (event) => {
     const uploadedFiles = event.target.files;
     if (uploadedFiles) {
@@ -487,54 +486,50 @@ const Dashboard = () => {
         }}
       />
       <Modal title="Editar Registro" open={editModalVisible} onOk={handleSaveChanges} onCancel={handleCloseEditModal}>
-        {updatedRecord ? (
-          <Form>
-            <Form.Item label="MFTO">
-              <Input value={updatedRecord.MFTO} onChange={(e) => handleInputChange(e, 'MFTO')} />
+        {updatedRecord && (
+          <Form
+            form={form}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            onFinish={handleSaveChanges}
+            initialValues={updatedRecord}
+          >
+            <Form.Item hidden label="id" name="id" rules={[{ required: true, message: 'Por favor ingresa el MFTO.' }]}>
+              <Input hidden />
             </Form.Item>
-
-            <Form.Item label="PLACA">
-              <Input value={updatedRecord.PLACA} onChange={(e) => handleInputChange(e, 'PLACA')} />
+            <Form.Item label="MFTO" name="MFTO" rules={[{ required: true, message: 'Por favor ingresa el MFTO.' }]}>
+              <Input disabled />
             </Form.Item>
-
-            <Form.Item label="PROPIETARIO">
-              <Input value={updatedRecord.PROPIETARIO} onChange={(e) => handleInputChange(e, 'PROPIETARIO')} />
+            <Form.Item label="PLACA" name="PLACA" rules={[{ required: true, message: 'Por favor ingresa la placa.' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="DOCUMENTO">
-              <Input value={updatedRecord.DOCUMENTO} onChange={(e) => handleInputChange(e, 'DOCUMENTO')} />
+            <Form.Item label="PROPIETARIO" name="PROPIETARIO" rules={[{ required: true, message: 'Por favor ingresa el nombre.' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="FLETE PAGADO">
-              <Input value={updatedRecord['FLETE PAGADO']} onChange={(e) => handleInputChange(e, 'FLETE PAGADO')} />
+            <Form.Item label="ANTICIPOS" name="ANTICIPOS" rules={[{ required: true, message: 'Por favor ingresa el anticipo.' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="ANTICIPOS">
-              <Input value={updatedRecord.ANTICIPOS} onChange={(e) => handleInputChange(e, 'ANTICIPOS')} />
+            <Form.Item label="FLETE PAGADO" name="FLETE PAGADO" rules={[{ required: true, message: 'Por favor ingresa el saldo.' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="RETENCIONES ICA 5*1000 / FUENTE 1%">
-              <Input value={updatedRecord['RETENCIONES ICA 5*1000 / FUENTE 1%']} onChange={(e) => handleInputChange(e, 'RETENCIONES ICA 5*1000 / FUENTE 1%')} />
+            <Form.Item label="RETENCIONES ICA 5*1000 / FUENTE 1%" name="RETENCIONES" rules={[{ required: true, message: 'Por favor ingresa el saldo.' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="POLIZA / ESTAMPILLA">
-              <Input value={updatedRecord['POLIZA / ESTAMPILLA']} onChange={(e) => handleInputChange(e, 'POLIZA / ESTAMPILLA')} />
+            <Form.Item label="POLIZA / ESTAMPILLA" name="POLIZA" rules={[{ required: true, message: 'Por favor ingresa el saldo.' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="FALTANTE / O DAÑO EN LA MERCANCIA">
-              <Input value={updatedRecord['FALTANTE / O DAÑO EN LA MERCANCIA']} onChange={(e) => handleInputChange(e, 'FALTANTE / O DAÑO EN LA MERCANCIA')} />
+            <Form.Item label="FALTANTE / O DAÑO EN LA MERCANCIA" name="FALTANTE" rules={[{ required: true, message: 'Por favor ingresa si hubo daño a mercancia.' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="VR. SALDO CANCELAR">
-              <Input value={updatedRecord['VR. SALDO CANCELAR']} onChange={(e) => handleInputChange(e, 'VR. SALDO CANCELAR')} />
+            <Form.Item label="VR.SALDO CANCELAR" name=" VR. SALDO CANCELAR " rules={[{ required: true, message: 'Por favor ingresa el saldo cancelar' }]}>
+              <Input />
             </Form.Item>
-
-            <Form.Item label="FECHA CONSIGNACION SALDO">
-              <Input value={updatedRecord['FECHA CONSIGNACION SALDO']} onChange={(e) => handleInputChange(e, 'FECHA CONSIGNACION SALDO')} />
+            <Form.Item label="FECHA CONSIGNACION SALDO" name="FECHA CONSIGNACION SALDO" rules={[{ required: true, message: 'Por favor ingresa la fecha consignacion.' }]}>
+              <Input />
             </Form.Item>
 
           </Form>
-        ) : null}
+        ) }
       </Modal>
 
       <Modal

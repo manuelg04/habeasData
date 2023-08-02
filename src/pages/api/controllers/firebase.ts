@@ -111,7 +111,6 @@ export async function uploadAndAssignFile(file) {
 
   // Verifica si el documento existe
   if (querySnapshot.empty) {
-    console.log(`No se encontró ningún documento con el MFTO ${MFTO}`);
     return;
   }
 
