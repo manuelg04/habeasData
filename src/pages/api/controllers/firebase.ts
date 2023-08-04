@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-useless-escape */
@@ -28,7 +29,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { utils, read } from 'xlsx';
-import _, { map, toArray } from 'lodash';
+import { map, toArray } from 'lodash';
 import { COLECCION_MAIN } from '../../../constantes';
 
 const firebaseConfig = {
