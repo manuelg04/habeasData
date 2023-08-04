@@ -6,8 +6,9 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import {
-  message, Form, Input, Button, Card, Typography, Alert, Checkbox, DatePicker,
+  Form, Input, Button, Card, Typography, Alert, Checkbox, DatePicker,
 } from 'antd';
+import Swal from 'sweetalert2';
 import {
   setUser,
 } from '../redux/userSlice';
@@ -36,11 +37,19 @@ export default function Login() {
 
       // Almacenar el token en las cookies/localStorage
       document.cookie = `token=${response.data.token}; path=/`;
-
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Inicio de sesión exitoso',
+      });
       // Redirigir al usuario al panel de control
       router.push('/dashboard');
     } catch (error) {
-      message.error('Usuario o contraseña incorrectos');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Usuario o contraseña incorrectos',
+      });
     }
   };
 
@@ -53,12 +62,20 @@ export default function Login() {
         email,
         fecha_expedicioncc: expeditionDate,
       });
-
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Registro exitoso',
+      });
       // Redirige al usuario al inicio de sesión luego de registrarse
       setRegistering(false);
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        message.error('Usuario ya registrado, por favor inicie sesión');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Usuario ya registrado en la base de datos',
+        });
       }
     }
   };

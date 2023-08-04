@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react';
 import {
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import Swal from 'sweetalert2';
 import {
   uploadFile, db, uploadNonExcelFile, uploadAndAssignFile,
 } from './api/controllers/firebase';
@@ -150,7 +151,11 @@ const Dashboard = () => {
     try {
       setIsUploading(true);
       if (!file) {
-        message.error('No se ha seleccionado ningún archivo para subir.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se ha seleccionado ningún archivo para subir.',
+        });
         return;
       }
       if (file.type === 'application/pdf') {
@@ -162,7 +167,11 @@ const Dashboard = () => {
 
         // If no such document exist, show error message
         if (querySnapshot.empty) {
-          message.error(`No se encontró un documento con el número MFTO: ${mfto}`);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: `No se encontró un documento con el número MFTO: ${mfto}`,
+          });
           return;
         }
 
@@ -174,7 +183,11 @@ const Dashboard = () => {
           urlliquidacion: fileUrl,
         });
 
-        message.success(`La liquidación se cargó correctamente. URL del archivo: ${fileUrl}`);
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'La liquidación se cargó correctamente',
+        });
       } else {
         message.error('El archivo seleccionado no es un PDF.');
       }
@@ -189,7 +202,11 @@ const Dashboard = () => {
     try {
       setIsUploadingPago(true);
       if (!file) {
-        message.error('No se ha seleccionado ningún archivo para subir.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se ha seleccionado ningún archivo para subir.',
+        });
         return;
       }
       if (file.type.startsWith('image/')) {
@@ -214,7 +231,11 @@ const Dashboard = () => {
           urlpago: fileUrl,
         });
 
-        message.success(`El pago se cargó correctamente. URL del archivo: ${fileUrl}`);
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'La liquidación se cargó correctamente',
+        });
       } else {
         message.error('El archivo seleccionado no es una imagen.');
       }
@@ -406,7 +427,6 @@ const Dashboard = () => {
             <Upload
               name="file"
               accept=".pdf"
-              beforeUpload={() => false}
               customRequest={({ file }) => {
                 handleUploadLiquidacion(file, record.MFTO);
               }}
