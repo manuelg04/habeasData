@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable prefer-const */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-alert */
@@ -27,6 +28,7 @@ import {
   uploadFile, db, uploadNonExcelFile, uploadAndAssignFile,
 } from './api/controllers/firebase';
 import { RootState } from '../redux/store';
+import { COLECCION_MAIN } from '../constantes';
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -44,16 +46,53 @@ const Dashboard = () => {
   const { role } = useSelector((state: RootState) => state.user.usuario);
   const documento = useSelector((state: RootState) => state.user.usuario.usuario);
   const [currentPage, setCurrentPage] = useState(1);
-  const [files, setFiles] = useState<File[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [updatedRecord, setUpdatedRecord] = useState({ ...selectedRecord }); // Crea un nuevo estado para manejar los cambios
   const [form] = Form.useForm();
+  const [isUploadingExcel, setIsUploadingExcel] = useState(false);
+  const [isUploadingLiquidacion, setIsUploadingLiquidacion] = useState(false);
+  const [isUploadingPago, setIsUploadingPago] = useState(false);
   const PAGESIZE = 10;
-  const handleInputChange = (e, field) => {
-    setUpdatedRecord({ ...updatedRecord, [field]: e.target.value });
+
+  const handleUploadExcel = async (file) => {
+    setIsUploadingExcel(true);
+    try {
+      if (!file) {
+        message.error('No se ha seleccionado ningún archivo para subir.');
+        return;
+      }
+      if (file && (file.name.endsWith('.xls') || file.name.endsWith('.xlsx'))) {
+        const fileUrl = await uploadFile(file);
+
+        // Query the collection where 'MFTO' field matches the input 'mftoNumber'
+        const q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', mftoNumber));
+        const querySnapshot = await getDocs(q);
+
+        // If no such document exist, show error message
+        if (querySnapshot.empty) {
+          message.error(`No se encontró un documento con el número MFTO: ${mftoNumber}`);
+          return;
+        }
+
+        // Assuming 'MFTO' field is unique within the collection, use the first document
+        const docSnap = querySnapshot.docs[0];
+
+        // Update the document with new file url
+        await updateDoc(doc(db, COLECCION_MAIN, docSnap.id), {
+          // Assuming that Excel files are used for 'urlliquidacion' field
+          urlliquidacion: fileUrl,
+        });
+
+        message.success(`El archivo Excel se cargó correctamente. URL del archivo: ${fileUrl}`);
+      } else {
+        message.error('El archivo seleccionado no es un archivo Excel.');
+      }
+    } catch (error) {
+      message.error(`Error al subir el archivo Excel: ${error}`);
+    } finally {
+      setIsUploadingExcel(false);
+    }
   };
 
   const handleObservationChange = (e) => {
@@ -68,7 +107,7 @@ const Dashboard = () => {
   const handleSaveObservation = async () => {
     try {
       // Query the collection where 'MFTO' field matches the input 'mftoNumber'
-      const q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', mftoNumber));
+      const q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', mftoNumber));
       const querySnapshot = await getDocs(q);
 
       // If no such document exist, show error message
@@ -81,7 +120,7 @@ const Dashboard = () => {
       const docSnap = querySnapshot.docs[0];
 
       // Update the document with new observation
-      await updateDoc(doc(db, 'nombre_de_tu_colección', docSnap.id), {
+      await updateDoc(doc(db, COLECCION_MAIN, docSnap.id), {
         observaciones: observation,
       });
 
@@ -92,7 +131,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleOpenModal = (type, mfto) => {
+  const handleOpenModalForUpload = (type, mfto) => {
     setMftoNumber(mfto);
     setUploadType(type);
     setUploadModalVisible(true);
@@ -107,29 +146,23 @@ const Dashboard = () => {
     setFileList(info.fileList);
   };
 
-  const handleConfirmUpload = async () => {
+  const handleUploadLiquidacion = async (file, mfto) => {
     try {
-      if (!fileList || !fileList.length) {
+      setIsUploading(true);
+      if (!file) {
         message.error('No se ha seleccionado ningún archivo para subir.');
         return;
       }
-      const file = fileList[0]?.originFileObj;
-      if (file) {
-        let fileUrl;
-        if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
-          fileUrl = await uploadFile(file);
-          setIsUploading(true);
-        } else {
-          fileUrl = await uploadNonExcelFile(file);
-        }
+      if (file.type === 'application/pdf') {
+        const fileUrl = await uploadNonExcelFile(file);
 
-        // Query the collection where 'MFTO' field matches the input 'mftoNumber'
-        const q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', mftoNumber));
+        // Query the collection where 'MFTO' field matches the input 'mfto'
+        const q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', mfto));
         const querySnapshot = await getDocs(q);
 
         // If no such document exist, show error message
         if (querySnapshot.empty) {
-          message.error(`No se encontró un documento con el número MFTO: ${mftoNumber}`);
+          message.error(`No se encontró un documento con el número MFTO: ${mfto}`);
           return;
         }
 
@@ -137,17 +170,58 @@ const Dashboard = () => {
         const docSnap = querySnapshot.docs[0];
 
         // Update the document with new file url
-        await updateDoc(doc(db, 'nombre_de_tu_colección', docSnap.id), {
-          urlpago: uploadType === 'Imagen' ? fileUrl : docSnap.data().urlpago || null,
-          urlliquidacion: uploadType === 'PDF' ? fileUrl : docSnap.data().urlliquidacion || null,
+        await updateDoc(doc(db, COLECCION_MAIN, docSnap.id), {
+          urlliquidacion: fileUrl,
         });
 
-        message.success(`El archivo se cargó correctamente. URL del archivo: ${fileUrl}`);
+        message.success(`La liquidación se cargó correctamente. URL del archivo: ${fileUrl}`);
+      } else {
+        message.error('El archivo seleccionado no es un PDF.');
       }
-      handleCloseModal();
     } catch (error) {
+      message.error(`Error al subir la liquidación: ${error}`);
+    } finally {
       setIsUploading(false);
-      message.error(`Error al subir el archivo: ${error}`);
+    }
+  };
+
+  const handleUploadPago = async (file, pago) => {
+    try {
+      setIsUploadingPago(true);
+      if (!file) {
+        message.error('No se ha seleccionado ningún archivo para subir.');
+        return;
+      }
+      if (file.type.startsWith('image/')) {
+        const fileUrl = await uploadNonExcelFile(file);
+
+        // Query the collection where 'MFTO' field matches the input 'mfto'
+        const q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', pago));
+        const querySnapshot = await getDocs(q);
+
+        // If no such document exist, show error message
+        if (querySnapshot.empty) {
+          message.error(`No se encontró un documento con el número MFTO: ${pago}`);
+          return;
+        }
+
+        // Assuming 'MFTO' field is unique within the collection, use the first document
+        const docSnap = querySnapshot.docs[0];
+
+        // Update the document with new file url
+        await updateDoc(doc(db, COLECCION_MAIN, docSnap.id), {
+          // Assuming that image files are used for 'urlpago' field
+          urlpago: fileUrl,
+        });
+
+        message.success(`El pago se cargó correctamente. URL del archivo: ${fileUrl}`);
+      } else {
+        message.error('El archivo seleccionado no es una imagen.');
+      }
+    } catch (error) {
+      message.error(`Error al subir el pago: ${error}`);
+    } finally {
+      setIsUploadingPago(false);
     }
   };
 
@@ -157,23 +231,23 @@ const Dashboard = () => {
 
       if (newPage && lastDoc) {
         if (role === 'admin') {
-          q = query(collection(db, 'nombre_de_tu_colección'), orderBy('MFTO'), startAfter(lastDoc), limit(PAGESIZE));
+          q = query(collection(db, COLECCION_MAIN), orderBy('MFTO'), startAfter(lastDoc), limit(PAGESIZE));
         } else {
-          q = query(collection(db, 'nombre_de_tu_colección'), where('DOCUMENTO', '==', documento), orderBy('MFTO'), startAfter(lastDoc), limit(PAGESIZE));
+          q = query(collection(db, COLECCION_MAIN), where('DOCUMENTO', '==', documento), orderBy('MFTO'), startAfter(lastDoc), limit(PAGESIZE));
         }
       } else if (role === 'admin') {
-        q = query(collection(db, 'nombre_de_tu_colección'), orderBy('MFTO'), limit(PAGESIZE));
+        q = query(collection(db, COLECCION_MAIN), orderBy('MFTO'), limit(PAGESIZE));
       } else {
-        q = query(collection(db, 'nombre_de_tu_colección'), where('DOCUMENTO', '==', documento), orderBy('MFTO'), limit(PAGESIZE));
+        q = query(collection(db, COLECCION_MAIN), where('DOCUMENTO', '==', documento), orderBy('MFTO'), limit(PAGESIZE));
       }
       if (mfto !== '') {
-        q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', mfto));
+        q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', mfto));
       } else if (placa !== '') {
         // Consulta para PLACA
-        q = query(collection(db, 'nombre_de_tu_colección'), where('PLACA', '==', placa));
+        q = query(collection(db, COLECCION_MAIN), where('PLACA', '==', placa));
       } else {
         // Consulta por defecto
-        q = query(collection(db, 'nombre_de_tu_colección'), orderBy('MFTO'), limit(PAGESIZE));
+        q = query(collection(db, COLECCION_MAIN), orderBy('MFTO'), limit(PAGESIZE));
       }
 
       const dataQuery = await getDocs(q);
@@ -194,7 +268,7 @@ const Dashboard = () => {
         setCurrentPage(1);
       }
 
-      const collectionRef = collection(db, 'nombre_de_tu_colección');
+      const collectionRef = collection(db, COLECCION_MAIN);
       const snapshot = await getCountFromServer(collectionRef);
       const { count } = snapshot.data();
       setTotalPages(Math.ceil(count / PAGESIZE));
@@ -241,10 +315,10 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteRecord = async (id) => {
+  const handleDeleteRecord = async (viaje) => {
     try {
-      await deleteDoc(doc(db, 'nombre_de_tu_colección', id));
-      message.success(`El registro con el ID ${id} fue eliminado correctamente.`);
+      await deleteDoc(doc(db, COLECCION_MAIN, viaje.id));
+      message.success(`El registro con el Manifiesto ${viaje.MFTO} fue eliminado correctamente.`);
     } catch (error) {
       message.error(`Error al eliminar el registro: ${error}`);
     }
@@ -264,7 +338,7 @@ const Dashboard = () => {
   const handleSaveChanges = async () => {
     const values = form.getFieldsValue();
     try {
-      const docRef = doc(db, 'nombre_de_tu_colección', values.id);
+      const docRef = doc(db, COLECCION_MAIN, values.id);
       await updateDoc(docRef, values);
       message.success('Registro actualizado exitosamente');
     } catch (error) {
@@ -276,7 +350,7 @@ const Dashboard = () => {
   const columns = [
     {
       title: 'Fecha Cargue',
-      dataIndex: 'Fecha Despacho',
+      dataIndex: 'FECHA DESPACHO',
     },
     {
       title: 'MFTO',
@@ -316,7 +390,7 @@ const Dashboard = () => {
     },
     {
       title: 'VR. SALDO CANCELAR',
-      dataIndex: ' VR. SALDO CANCELAR ',
+      dataIndex: 'VR. SALDO CANCELAR',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',
@@ -327,28 +401,41 @@ const Dashboard = () => {
       key: 'acciones',
       render: (text, record) => (
         <Space size="middle">
-          <FileAddOutlined
-            onClick={() => {
-              handleOpenModal('PDF', record.MFTO);
-              // Aquí puedes agregar la funcionalidad para "Subir liquidación"
-            }}
-          />
-          <DollarCircleOutlined
-            onClick={() => {
-              handleOpenModal('Imagen', record.MFTO);
-              // Aquí puedes agregar la funcionalidad para "Subir pago"
-            }}
-          />
+          {role === 'admin' && (
+          <>
+            <Upload
+              name="file"
+              accept=".pdf"
+              beforeUpload={() => false}
+              customRequest={({ file }) => {
+                handleUploadLiquidacion(file, record.MFTO);
+              }}
+              showUploadList={false}
+            >
+              <FileAddOutlined />
+            </Upload>
+            <Upload
+              name="file"
+              accept="image/*"
+              customRequest={({ file }) => {
+                handleUploadPago(file, record.MFTO);
+              }}
+              showUploadList={false}
+            >
+              <DollarCircleOutlined />
+            </Upload>
+          </>
+          )}
           <EditOutlined
             onClick={() => {
               handleOpenModalForEdit(record.id);
             }}
           />
           <Popconfirm
-            title={`¿Estás seguro de eliminar el registro con id ${record.id}?`}
+            title={`¿Estás seguro de eliminar el registro del manifiesto ${record.MFTO}?`}
             icon={<ExclamationCircleOutlined style={{ color: 'red' }} />}
             onConfirm={() => {
-              handleDeleteRecord(record.id);
+              handleDeleteRecord(record);
             }}
             onCancel={() => ('Cancelado')}
             okText="Sí"
@@ -405,60 +492,27 @@ const Dashboard = () => {
 
     // Añade aquí el resto de tus columnas...
   ];
-  const onFileChange = (event) => {
-    const uploadedFiles = event.target.files;
-    if (uploadedFiles) {
-      const validImageTypes = ['image/png', 'application/pdf'];
-      const selectedFiles = [];
 
-      for (let i = 0; i < uploadedFiles.length; i++) {
-        const file = uploadedFiles[i];
-        const fileType = file.type;
-
-        if (!validImageTypes.includes(fileType)) {
-          setError(`Archivo inválido: ${file.name}. Por favor, suba un archivo PNG o PDF.`);
-          return;
-        }
-        selectedFiles.push(file);
-      }
-      setError(null);
-      setFiles(selectedFiles);
-    }
-  };
-
-  const onUploadClick = async () => {
-    if (!files.length) {
-      alert('Por favor, seleccione al menos un archivo');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        await uploadAndAssignFile(file);
-      }
-      alert('Archivos subidos exitosamente');
-    } catch (error) {
-      setError(`Error al subir los archivos: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   return (
     <>
       <Input placeholder="MFTO" onChange={(e) => setSearchTerm(e.target.value)} />
       <Input placeholder="PLACA" onChange={(e) => setSearchPlaca(e.target.value)} />
       <Button onClick={handleSearch}>Buscar</Button>
       {role === 'admin' && (
-        <Upload {...uploadProps}>
+        <Upload
+          accept=".xls,.xlsx"
+          beforeUpload={(file) => {
+            handleUploadExcel(file);
+            return false; // return false so file won't auto upload
+          }}
+        >
           <Button>
             <Spin spinning={isUploading}>
               <UploadOutlined />
               Subir archivo Excel
             </Spin>
           </Button>
-          <input type="file" accept=".png,.pdf" multiple onChange={onFileChange} />
+          {/* <input type="file" accept=".png,.pdf" multiple onChange={onFileChange} />
           <button onClick={onUploadClick} disabled={isLoading}>
             {isLoading ? 'Subiendo...' : 'Subir nota vieja'}
           </button>
@@ -468,7 +522,7 @@ const Dashboard = () => {
             {' '}
             {error}
           </p>
-          )}
+          )} */}
         </Upload>
       )}
       <Table dataSource={data} columns={columns} pagination={false} />
@@ -528,25 +582,6 @@ const Dashboard = () => {
 
           </Form>
         ) }
-      </Modal>
-
-      <Modal
-        title={`Subir ${uploadType}`}
-        open={uploadModalVisible}
-        onCancel={handleCloseModal}
-        onOk={handleConfirmUpload}
-      >
-        <Upload
-          name="file"
-          accept={uploadType === 'PDF' ? '.pdf' : 'image/*'}
-          onChange={handleChange}
-          fileList={fileList}
-          listType="picture"
-        >
-          <Button>
-            Seleccionar archivo
-          </Button>
-        </Upload>
       </Modal>
       <Modal
         title="Agregar observación"

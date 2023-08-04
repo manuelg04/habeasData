@@ -28,6 +28,8 @@ import {
   where,
 } from 'firebase/firestore';
 import { utils, read } from 'xlsx';
+import _, { map, toArray } from 'lodash';
+import { COLECCION_MAIN } from '../../../constantes';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBZpSX3frkc1rRejJ-j8EvxdIIv--28wxE',
@@ -50,9 +52,48 @@ export async function processExcel(file) {
   const workbook = read(data, { type: 'array' });
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
+  const sheetDataArray = utils.sheet_to_json(worksheet, { header: 1 });
+  const headers = toArray(sheetDataArray[0]);
+  const TITULOS_CORRECTOS = [
+    'FECHA DESPACHO', // FECHA DESPACH LA POSICION 0 ESTA MAL ESCRITO,
+    'MFTO',
+    'PLACA',
+    'PROPIETARIO',
+    'DOCUMENTO',
+    'FLETE PAGADO',
+    'ANTICIPOS',
+    'RETENCIONES ICA 5*1000 / FUENTE 1%',
+    'POLIZA / ESTAMPILLA',
+    'FALTANTE / O DAÑO EN LA MERCANCIA',
+    'VR. SALDO CANCELAR',
+    'FECHA CONSIGNACION SALDO',
+  ];
+  const posicionesMALAS = [];
+  const comparedArrays = () => {
+    map(headers, (header, index) => {
+      const correctTitle = TITULOS_CORRECTOS[index];
+      const isIncorrect = header !== correctTitle;
+      if (isIncorrect) {
+        // console.log(`El título ${header} en la posición ${index} es incorrecto. Debería ser ${correctTitle}`);
+        posicionesMALAS.push(index);
+      }
+    });
+    return posicionesMALAS;
+  };
+
+  const correcionDeTitulos = () => {
+    const titulosCorregidos = [];
+    map(posicionesMALAS, (posicion) => {
+      titulosCorregidos.push(TITULOS_CORRECTOS[posicion]);
+    });
+    return titulosCorregidos;
+  };
+  // CREAR FUNCION PARA CORREGIR LOS TITULOS y guardar las posiciones mal en un array
+
   const jsonData = utils.sheet_to_json(worksheet, { raw: false });
+
   const checkIfExists = async (manifiesto) => {
-    const q = query(collection(db, 'nombre_de_tu_colección'), where('MFTO', '==', manifiesto));
+    const q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', manifiesto));
     const querySnapshot = await getDocs(q);
     return !querySnapshot.empty;
   };
@@ -62,7 +103,12 @@ export async function processExcel(file) {
     if (existe) {
       console.error('El MFTO ya existe en la base de datos');
     } else {
-      await addDoc(collection(db, 'nombre_de_tu_colección'), obj);
+      const hayTitulosMalos = comparedArrays();
+      if (hayTitulosMalos.length > 0) {
+        const titulosCorregidos = correcionDeTitulos();
+      } else {
+        await addDoc(collection(db, COLECCION_MAIN), obj);
+      }
     }
   });
 }
@@ -103,7 +149,7 @@ export async function uploadAndAssignFile(file) {
   const url = await uploadNonExcelFile(file);
 
   // referencia a la colección
-  const collectionRef = collection(db, 'nombre_de_tu_colección');
+  const collectionRef = collection(db, COLECCION_MAIN);
 
   // Obtén el documento con el MFTO correspondiente
   const q = query(collectionRef, where('MFTO', '==', MFTO));
