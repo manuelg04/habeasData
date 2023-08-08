@@ -6,12 +6,14 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import {
-  Form, Input, Button, Card, Typography, Alert, Checkbox, DatePicker,
+  Form, Input, Button, Card, Typography, Alert, Checkbox, DatePicker, Select,
 } from 'antd';
 import Swal from 'sweetalert2';
 import {
   setUser,
 } from '../redux/userSlice';
+
+const { Option } = Select;
 
 export default function Login() {
   const [infouser, setInfoUser] = useState('');
@@ -21,8 +23,9 @@ export default function Login() {
   const [expeditionDate, setExpeditionDate] = useState(null);
   const [email, setEmail] = useState('');
   const [ownerName, setOwnerName] = useState('');
+  const [documentType, setDocumentType] = useState('Cedula'); // Por defecto 'Cedula'
   const router = useRouter();
-  const dispatch = useDispatch(); // obtén dispatch
+  const dispatch = useDispatch();
 
   const handleSubmit = async () => {
     try {
@@ -56,6 +59,7 @@ export default function Login() {
   const handleSubmitRegister = async () => {
     try {
       await axios.post('/api/middlewares/auth/register', {
+        tipo_documento: documentType,
         usuario: infouser,
         pass,
         nombre: ownerName,
@@ -152,9 +156,15 @@ export default function Login() {
           ) : (
             <Form onFinish={handleSubmitRegister}>
               <Form.Item>
+                <Select value={documentType} onChange={(value) => setDocumentType(value)}>
+                  <Option value="Cedula">Cédula</Option>
+                  <Option value="NIT">NIT</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item>
                 <Input
                   type="text"
-                  placeholder="No de cédula o NIT"
+                  placeholder="No de documento"
                   value={infouser}
                   onChange={(e) => setInfoUser(e.target.value)}
                   onKeyPress={(e) => {
@@ -168,14 +178,16 @@ export default function Login() {
               <Typography.Paragraph type="secondary">
                 Señor usuario recuerde que el campo de Documento solo admite Numeros
               </Typography.Paragraph>
+              {documentType !== 'NIT' && (
               <Form.Item>
                 <DatePicker
                   format="YYYY-MM-DD"
                   placeholder="Fecha de expedición"
                   onChange={(date, dateString) => setExpeditionDate(dateString)}
-                  aria-required
+                  required
                 />
               </Form.Item>
+              )}
 
               {/* Campo de Correo electrónico */}
               <Form.Item>
