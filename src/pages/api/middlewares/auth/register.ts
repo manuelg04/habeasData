@@ -7,7 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const {
     tipo_doc, usuario, pass, nombre, email, fecha_expedicioncc,
   } = req.body;
-  console.log("🚀 ~ req.body:", req.body)
   try {
     // Verifica si el usuario ya existe
     const [existingUsers] = await db.query('SELECT * FROM usuarios WHERE usuario = ?', [usuario]);
@@ -25,7 +24,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(201).json({ message: 'Usuario creado exitosamente' });
   } catch (error) {
-    console.log("🚀 ~ error:", error)
     // Manejo de errores
     return res.status(500).json({ message: 'Error del servidor' });
   }

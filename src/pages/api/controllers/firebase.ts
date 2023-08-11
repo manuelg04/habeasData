@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable guard-for-in */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -22,6 +24,8 @@ import { v4 } from 'uuid';
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   getFirestore,
   query,
@@ -46,6 +50,11 @@ const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const db = getFirestore(app);
 
+function transformKey(key) {
+  // Reemplazamos caracteres no permitidos y el punto por guion bajo
+  return key.replace(/[*\/\.]/g, '_');
+}
+
 export async function processExcel(file) {
   const response = await fetch(file);
   const arrayBuffer = await response.arrayBuffer();
@@ -54,7 +63,7 @@ export async function processExcel(file) {
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
   const sheetDataArray = utils.sheet_to_json(worksheet, { header: 1 });
-  const headers = toArray(sheetDataArray[0]);
+  const headersFromExcel = toArray(sheetDataArray[0]);
   const TITULOS_CORRECTOS = [
     'FECHA DESPACHO', // FECHA DESPACH LA POSICION 0 ESTA MAL ESCRITO,
     'MFTO',
@@ -70,25 +79,14 @@ export async function processExcel(file) {
     'FECHA CONSIGNACION SALDO',
   ];
   const posicionesMALAS = [];
-  const comparedArrays = () => {
-    map(headers, (header, index) => {
-      const correctTitle = TITULOS_CORRECTOS[index];
-      const isIncorrect = header !== correctTitle;
-      if (isIncorrect) {
-        // console.log(`El título ${header} en la posición ${index} es incorrecto. Debería ser ${correctTitle}`);
-        posicionesMALAS.push(index);
-      }
-    });
-    return posicionesMALAS;
-  };
 
-  const correcionDeTitulos = () => {
-    const titulosCorregidos = [];
-    map(posicionesMALAS, (posicion) => {
-      titulosCorregidos.push(TITULOS_CORRECTOS[posicion]);
-    });
-    return titulosCorregidos;
-  };
+  // const correcionDeTitulos = () => {
+  //   const titulosCorregidos = [];
+  //   map(posicionesMALAS, (posicion) => {
+  //     titulosCorregidos.push(TITULOS_CORRECTOS[posicion]);
+  //   });
+  //   return titulosCorregidos;
+  // };
   // CREAR FUNCION PARA CORREGIR LOS TITULOS y guardar las posiciones mal en un array
 
   const jsonData = utils.sheet_to_json(worksheet, { raw: false });
@@ -99,17 +97,50 @@ export async function processExcel(file) {
     return !querySnapshot.empty;
   };
 
-  jsonData.forEach(async (obj:any, index) => {
-    const existe = await checkIfExists(obj.MFTO);
-    if (existe) {
-      console.error('El MFTO ya existe en la base de datos');
-    } else {
-      const hayTitulosMalos = comparedArrays();
-      if (hayTitulosMalos.length > 0) {
-        const titulosCorregidos = correcionDeTitulos();
+  function flattenObject(obj) {
+    const result = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        const flattenedSubObj = flattenObject(value);
+        for (const [subKey, subValue] of Object.entries(flattenedSubObj)) {
+          result[`${key} ${subKey}`] = subValue;
+        }
       } else {
-        await addDoc(collection(db, COLECCION_MAIN), obj);
+        result[key] = value;
       }
+    }
+
+    return result;
+  }
+
+  jsonData.forEach(async (obj:any, index) => {
+    // console.log('Raw object from Excel:', obj);
+    const correctedObj = headersFromExcel.reduce((accumulator, header, idx) => {
+      // console.log('Processing header:', header);
+      accumulator[transformKey(TITULOS_CORRECTOS[idx])] = obj[header];
+      return accumulator;
+    }, {});
+    // console.log('correctedObj after transformation:', correctedObj);
+
+    const mftoActual = obj.MFTO || obj.MFT;
+    const existe = await checkIfExists(mftoActual);
+
+    if (existe) {
+      const q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', mftoActual));
+      const querySnapshot = await getDocs(q);
+      const documentoActual = querySnapshot.docs[0].data();
+
+      for (const [key, value] of Object.entries(correctedObj)) {
+        if (documentoActual[key] !== value) {
+          console.log(`Campo cambiado: ${key}. Valor anterior: ${documentoActual[key]}, Nuevo valor: ${value}`);
+        }
+      }
+      // console.log(`Actualizando MFTO ${mftoActual} con nuevos valores.`);
+      await updateDoc(doc(db, COLECCION_MAIN, querySnapshot.docs[0].id), correctedObj);
+    } else {
+      const flattenedObj = flattenObject(correctedObj);
+      await addDoc(collection(db, COLECCION_MAIN), flattenedObj);
     }
   });
 }
@@ -168,5 +199,57 @@ export async function uploadAndAssignFile(file) {
     await updateDoc(docRef, { urlpago: url });
   } else if (type === 'liquidacion') {
     await updateDoc(docRef, { urlliquidacion: url });
+  }
+}
+
+export async function getRecordsForUser(document: string) {
+  const q = query(collection(db, COLECCION_MAIN), where('DOCUMENTO', '==', document));
+  const querySnapshot = await getDocs(q);
+
+  const records = [];
+  querySnapshot.forEach((doc) => {
+    records.push(doc.data());
+  });
+  // console.log('🚀 ~ records:', records);
+
+  return records;
+}
+
+async function deleteRecordById(docId: string) {
+  const docRef = doc(db, COLECCION_MAIN, docId);
+  await deleteDoc(docRef);
+}
+
+export async function deleteIrrelevantDuplicates() {
+  const q = query(collection(db, COLECCION_MAIN));
+  const querySnapshot = await getDocs(q);
+
+  const records: any[] = [];
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    records.push({ id: doc.id, ...data });
+  });
+
+  // Agrupar registros por MFTO
+  const groupedByMFTO: { [key: string]: any[] } = {};
+  records.forEach((record) => {
+    if (!groupedByMFTO[record.MFTO]) {
+      groupedByMFTO[record.MFTO] = [];
+    }
+    groupedByMFTO[record.MFTO].push(record);
+  });
+
+  // Identificar duplicados y borrar los irrelevantes
+  for (const mfto in groupedByMFTO) {
+    const groupedRecords = groupedByMFTO[mfto];
+    if (groupedRecords.length > 1) {
+      for (const record of groupedRecords) {
+        // Condiciones para eliminar
+        if (!record.urlliquidacion && !record.urlpago && !record.observaciones) {
+          await deleteRecordById(record.id);
+          // console.log(`Registro con ID ${record.id} eliminado.`);
+        }
+      }
+    }
   }
 }

@@ -312,6 +312,11 @@ export default function FormularioHabeasData() {
         <p>
           Al dar click en este recuadro, usted autoriza a Transportes MTM para el tratamiento de sus datos personales de acuerdo con la Ley Estatutaria 1581 de 2012 de Habeas Data en Colombia. Mediante este consentimiento, reconozco y acepto que Transportes MTM recolecte, almacene, procese y utilice mis datos personales con el propósito específico de brindar servicios de transporte.
         </p>
+
+        <p>
+          Al generar la presente autoriza y con el envió de documentos para el estudio de seguridad correspondiente, se entenderá igualmente la autorizacion por parte del propietario y/o poseedor del vehiculo, para el tratamiento de datos personales, con fines de consulta ante los diferentes entes de control y listas de seguridad.
+        </p>
+
         <p>
           Entiendo que mis datos personales serán tratados de manera confidencial y segura, garantizando la privacidad y protección de mis derechos como titular de los datos. Asimismo, comprendo que tengo el derecho de acceder, rectificar, actualizar y suprimir mis datos personales, así como el derecho de oponerme al tratamiento de los mismos, de acuerdo con lo establecido en la Ley 1581 de 2012. Para ejercer estos derechos, podré contactar a Transportes MTM a través de los datos de contacto proporcionados en su política de habeas data.
         </p>

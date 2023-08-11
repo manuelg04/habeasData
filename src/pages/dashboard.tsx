@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable prefer-const */
 /* eslint-disable no-restricted-syntax */
@@ -26,7 +27,7 @@ import {
 } from 'firebase/firestore';
 import Swal from 'sweetalert2';
 import {
-  uploadFile, db, uploadNonExcelFile, uploadAndAssignFile,
+  uploadFile, db, uploadNonExcelFile, uploadAndAssignFile, getRecordsForUser, deleteIrrelevantDuplicates,
 } from './api/controllers/firebase';
 import { RootState } from '../redux/store';
 import { COLECCION_MAIN } from '../constantes';
@@ -49,7 +50,8 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [updatedRecord, setUpdatedRecord] = useState({ ...selectedRecord }); // Crea un nuevo estado para manejar los cambios
+  const [updatedRecord, setUpdatedRecord] = useState({ ...selectedRecord });
+  const [records, setRecords] = useState([]);
   const [form] = Form.useForm();
   const [isUploadingExcel, setIsUploadingExcel] = useState(false);
   const [isUploadingLiquidacion, setIsUploadingLiquidacion] = useState(false);
@@ -72,7 +74,7 @@ const Dashboard = () => {
 
         // If no such document exist, show error message
         if (querySnapshot.empty) {
-          message.error(`No se encontró un documento con el número MFTO: ${mftoNumber}`);
+          message.success('Archivo subido y asignado correctamente.');
           return;
         }
 
@@ -113,7 +115,7 @@ const Dashboard = () => {
 
       // If no such document exist, show error message
       if (querySnapshot.empty) {
-        message.error(`No se encontró un documento con el número MFTO: ${mftoNumber}`);
+        message.success('Archivo subido y asignado correctamente.');
         return;
       }
 
@@ -250,24 +252,25 @@ const Dashboard = () => {
     try {
       let q;
 
-      if (newPage && lastDoc) {
-        if (role === 'admin') {
+      // Si el usuario tiene el rol de admin, traemos todos los registros.
+      if (role === 'admin') {
+        if (newPage && lastDoc) {
           q = query(collection(db, COLECCION_MAIN), orderBy('MFTO'), startAfter(lastDoc), limit(PAGESIZE));
         } else {
-          q = query(collection(db, COLECCION_MAIN), where('DOCUMENTO', '==', documento), orderBy('MFTO'), startAfter(lastDoc), limit(PAGESIZE));
+          q = query(collection(db, COLECCION_MAIN), orderBy('MFTO'), limit(PAGESIZE));
         }
-      } else if (role === 'admin') {
-        q = query(collection(db, COLECCION_MAIN), orderBy('MFTO'), limit(PAGESIZE));
       } else {
-        q = query(collection(db, COLECCION_MAIN), where('DOCUMENTO', '==', documento), orderBy('MFTO'), limit(PAGESIZE));
+        // Si no es admin, usamos la función getRecordsForUser
+        const records = await getRecordsForUser(documento);
+        setData(records);
+        return; // Terminamos la ejecución aquí ya que no necesitamos seguir.
       }
+
       if (mfto !== '') {
         q = query(collection(db, COLECCION_MAIN), where('MFTO', '==', mfto));
       } else if (placa !== '') {
-        // Consulta para PLACA
         q = query(collection(db, COLECCION_MAIN), where('PLACA', '==', placa));
       } else {
-        // Consulta por defecto
         q = query(collection(db, COLECCION_MAIN), orderBy('MFTO'), limit(PAGESIZE));
       }
 
@@ -399,19 +402,19 @@ const Dashboard = () => {
     },
     {
       title: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
-      dataIndex: 'RETENCIONES ICA 5*1000 / FUENTE 1%',
+      dataIndex: 'RETENCIONES ICA 5_1000 _ FUENTE 1%',
     },
     {
       title: 'POLIZA / ESTAMPILLA',
-      dataIndex: 'POLIZA / ESTAMPILLA',
+      dataIndex: 'POLIZA _ ESTAMPILLA',
     },
     {
       title: 'FALTANTE / O DAÑO EN LA MERCANCIA',
-      dataIndex: 'FALTANTE / O DAÑO EN LA MERCANCIA',
+      dataIndex: 'FALTANTE _ O DAÑO EN LA MERCANCIA',
     },
     {
       title: 'VR. SALDO CANCELAR',
-      dataIndex: 'VR. SALDO CANCELAR',
+      dataIndex: 'VR_ SALDO CANCELAR',
     },
     {
       title: 'FECHA CONSIGNACION SALDO',
@@ -513,11 +516,21 @@ const Dashboard = () => {
     // Añade aquí el resto de tus columnas...
   ];
 
+  const handleDuplicados = async () => {
+    try {
+      await deleteIrrelevantDuplicates();
+      message.success('Duplicados eliminados exitosamente');
+    } catch (error) {
+      message.error('Error al eliminar duplicados');
+    }
+  };
+
   return (
     <>
       <Input placeholder="MFTO" onChange={(e) => setSearchTerm(e.target.value)} />
       <Input placeholder="PLACA" onChange={(e) => setSearchPlaca(e.target.value)} />
       <Button onClick={handleSearch}>Buscar</Button>
+      <Button onClick={handleDuplicados}>Traer Duplicados</Button>
       {role === 'admin' && (
         <Upload
           accept=".xls,.xlsx"

@@ -184,7 +184,6 @@ export default function Login() {
                   format="YYYY-MM-DD"
                   placeholder="Fecha de expedición"
                   onChange={(date, dateString) => setExpeditionDate(dateString)}
-                  required
                 />
               </Form.Item>
               )}
