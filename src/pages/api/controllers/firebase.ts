@@ -107,7 +107,7 @@ export async function processExcel(file) {
           result[`${key} ${subKey}`] = subValue;
         }
       } else {
-        result[key] = value;
+        result[key] = value === undefined ? null : value; // Cambia undefined a null
       }
     }
 
