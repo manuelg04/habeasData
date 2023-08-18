@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable promise/always-return */
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -20,6 +22,7 @@ const NavBar = () => {
   const router = useRouter();
   const [selectedKey, setSelectedKey] = useState<string>('');
   const dispatch = useDispatch();
+  const justLoggedIn = typeof window !== 'undefined' && localStorage.getItem('justLoggedIn');
   useEffect(() => {
     setSelectedKey(router.pathname);
   }, [router.pathname]);
@@ -38,9 +41,26 @@ const NavBar = () => {
         message.error('Error al cerrar sesión');
       }
     }
+
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('justLoggedIn');
+    }
     // Si no hay un token, solo redirige al usuario al login
     router.push('/login');
   };
+
+  useEffect(() => {
+    axios.get('/api/controllers/verifyToken')
+      .then((response) => {
+        if (response.data.isValid) {
+          dispatch(setUser(response.data.user));
+        }
+      })
+      .catch((error) => {
+        message.error('Error al verificar el token', error);
+      });
+  }, []);
+
   return (
     <Menu
       className="custom_menu"
@@ -88,9 +108,19 @@ const NavBar = () => {
       </Item>
       <Item key="/login">
         {isLoggedIn
-          ? <a style={{ cursor: 'pointer' }} onClick={handleLogout}>Cerrar Sesion</a>
-          : <Link href="/login">Iniciar Sesion</Link>}
+          ? (
+            justLoggedIn
+              ? <Link href="/dashboard">Consultar estado de cuenta</Link>
+              : <a style={{ cursor: 'pointer' }} onClick={handleLogout}>Cerrar Sesion</a>
+          )
+          : <Link href="/login">Consultar estado de cuenta</Link>}
       </Item>
+      {/* Botón de Consultar estado de cuenta (solo si está autenticado) */}
+      {isLoggedIn && (
+        <Item key="/dashboard">
+          <Link href="/dashboard">Consultar estado de cuenta</Link>
+        </Item>
+      )}
     </Menu>
   );
 };

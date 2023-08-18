@@ -339,22 +339,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteRecord = async (viaje) => {
-    try {
-      await deleteDoc(doc(db, COLECCION_MAIN, viaje.id));
-      message.success(`El registro con el Manifiesto ${viaje.MFTO} fue eliminado correctamente.`);
-    } catch (error) {
-      message.error(`Error al eliminar el registro: ${error}`);
-    }
-  };
-
-  const handleOpenModalForEdit = (id) => {
-    const record = data.find((item) => item.id === id);
-    setEditModalVisible(true);
-    setSelectedRecord(record);
-    setUpdatedRecord(record); // Llenar "updatedRecord" con los datos actuales
-  };
-
   const handleCloseEditModal = () => {
     setEditModalVisible(false);
     setSelectedRecord(null);
@@ -371,10 +355,27 @@ const Dashboard = () => {
     setEditModalVisible(false);
   };
 
+  function formatDate(dateString) {
+    if (!dateString && dateString === undefined) {
+      return 'Sin fecha';
+    }
+    let x = new Date(dateString);
+    if (Number.isNaN(x.getTime())) {
+      // Fecha inválida
+      return 'Fecha inválida';
+    }
+
+    let d = new Date(dateString);
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  }
+
   const columns = [
     {
       title: 'Fecha Cargue',
       dataIndex: 'FECHA DESPACHO',
+      render: (date) => formatDate(date),
+      sorter: (a, b) => new Date(a['FECHA DESPACHO']).getTime() - new Date(b['FECHA DESPACHO']).getTime(),
+      defaultSortOrder: 'descend' as const,
     },
     {
       title: 'MFTO',
@@ -419,6 +420,7 @@ const Dashboard = () => {
     {
       title: 'FECHA CONSIGNACION SALDO',
       dataIndex: 'FECHA CONSIGNACION SALDO',
+      render: (date) => formatDate(date),
     },
     {
       title: 'Acciones',
@@ -449,23 +451,7 @@ const Dashboard = () => {
             </Upload>
           </>
           )}
-          <EditOutlined
-            onClick={() => {
-              handleOpenModalForEdit(record.id);
-            }}
-          />
-          <Popconfirm
-            title={`¿Estás seguro de eliminar el registro del manifiesto ${record.MFTO}?`}
-            icon={<ExclamationCircleOutlined style={{ color: 'red' }} />}
-            onConfirm={() => {
-              handleDeleteRecord(record);
-            }}
-            onCancel={() => ('Cancelado')}
-            okText="Sí"
-            cancelText="No"
-          >
-            <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
-          </Popconfirm>
+
         </Space>
       ),
     },
