@@ -6,7 +6,7 @@ import {
   CarTwoTone, SecurityScanTwoTone, SettingTwoTone,
 } from '@ant-design/icons';
 import {
-  Typography, Row, Col, Image,
+  Typography, Row, Col, Image, Modal,
 } from 'antd';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
@@ -14,6 +14,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useSpring, animated } from 'react-spring';
+import { useState } from 'react';
 import styles from '../styles/Titles.module.css';
 
 const { Title, Paragraph } = Typography;
@@ -21,9 +22,22 @@ const { Title, Paragraph } = Typography;
 const Index = () => {
   const titleProps = useSpring({ opacity: 1, from: { opacity: 0 }, delay: 500 });
   const textProps = useSpring({ opacity: 1, from: { opacity: 0 }, delay: 900 });
+  const [isModalVisible, setIsModalVisible] = useState(true);
 
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
   return (
     <div className="p-8 bg-gray-200 min-h-screen">
+      <Modal
+        title={<div style={{ textAlign: 'center' }}>Información Importante</div>}
+        open={isModalVisible}
+        onCancel={handleCloseModal}
+        footer={null}
+        width={600}
+      >
+        <Image src="flota3.jpeg" alt="Información" width="100%" />
+      </Modal>
       <animated.div style={titleProps}>
         <Title level={2} className="text-center text-blue-800" style={{ fontSize: '42px' }}>
           TRANSPORTES MTM SERVICIOS TERCERIZADOS S.A.S.

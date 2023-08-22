@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable promise/always-return */
 /* eslint-disable react/jsx-no-undef */
@@ -57,7 +59,7 @@ const NavBar = () => {
         }
       })
       .catch((error) => {
-        message.error('Error al verificar el token', error);
+
       });
   }, []);
 

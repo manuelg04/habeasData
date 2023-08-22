@@ -117,6 +117,7 @@ export async function processExcel(file) {
   jsonData.forEach(async (obj:any, index) => {
     // console.log('Raw object from Excel:', obj);
     const correctedObj = headersFromExcel.reduce((accumulator, header, idx) => {
+      console.log(obj['FECHA CONSIGNACION SALDO']);
       // console.log('Processing header:', header);
       accumulator[transformKey(TITULOS_CORRECTOS[idx])] = obj[header];
       return accumulator;

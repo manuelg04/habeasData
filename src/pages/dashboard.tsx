@@ -374,8 +374,22 @@ const Dashboard = () => {
       title: 'Fecha Cargue',
       dataIndex: 'FECHA DESPACHO',
       render: (date) => formatDate(date),
-      sorter: (a, b) => new Date(a['FECHA DESPACHO']).getTime() - new Date(b['FECHA DESPACHO']).getTime(),
-      defaultSortOrder: 'descend' as const,
+      sorter: (a, b) => {
+        const dateA = formatDate(a['FECHA DESPACHO']);
+        const dateB = formatDate(b['FECHA DESPACHO']);
+
+        // Si alguna de las fechas es "Sin fecha", la movemos al final.
+        if (dateA === 'Sin fecha') return 1;
+        if (dateB === 'Sin fecha') return -1;
+
+        // Si alguna de las fechas es "Fecha inválida", la movemos al final, pero antes que "Sin fecha".
+        if (dateA === 'Fecha inválida') return 1;
+        if (dateB === 'Fecha inválida') return -1;
+
+        // En caso contrario, simplemente comparamos las fechas.
+        return new Date(b['FECHA DESPACHO']).getTime() - new Date(a['FECHA DESPACHO']).getTime();
+      },
+
     },
     {
       title: 'MFTO',
@@ -420,7 +434,6 @@ const Dashboard = () => {
     {
       title: 'FECHA CONSIGNACION SALDO',
       dataIndex: 'FECHA CONSIGNACION SALDO',
-      render: (date) => formatDate(date),
     },
     {
       title: 'Acciones',

@@ -95,32 +95,6 @@ const Contactanos = () => (
           <Space direction="vertical">
             <Image
               width={200}
-              src="/hernando.jpeg" // Aquí va la URL de la imagen de David
-              alt="David, nuestro abogado"
-              style={{ objectFit: 'cover', borderRadius: '50%' }}
-            />
-            <Title level={3}>Hernando Quintero</Title>
-            <Text>Director de zona Cucuta Norte de Santander  </Text>
-          </Space>
-        </Col>
-        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
-          {/* Card para David */}
-          <Space direction="vertical">
-            <Image
-              width={200}
-              src="/luisa.jpeg" // Aquí va la URL de la imagen de David
-              alt="David, nuestro abogado"
-              style={{ objectFit: 'cover', borderRadius: '50%' }}
-            />
-            <Title level={3}>Luisa Fernanda Quintero</Title>
-            <Text>Directora de zona Huila, Ibague, Manizales y Pereira </Text>
-          </Space>
-        </Col>
-        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
-          {/* Card para David */}
-          <Space direction="vertical">
-            <Image
-              width={200}
               src="/julian.jpeg" // Aquí va la URL de la imagen de David
               alt="David, nuestro abogado"
               style={{ objectFit: 'cover', borderRadius: '50%' }}
