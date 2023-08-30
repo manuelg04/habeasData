@@ -434,6 +434,22 @@ const Dashboard = () => {
     {
       title: 'FECHA CONSIGNACION SALDO',
       dataIndex: 'FECHA CONSIGNACION SALDO',
+      render: (date) => formatDate(date), // Aplica la función formatDate aquí
+      sorter: (a, b) => {
+        const dateA = formatDate(a['FECHA CONSIGNACION SALDO']);
+        const dateB = formatDate(b['FECHA CONSIGNACION SALDO']);
+
+        // Si alguna de las fechas es "Sin fecha", la movemos al final.
+        if (dateA === 'Sin fecha') return 1;
+        if (dateB === 'Sin fecha') return -1;
+
+        // Si alguna de las fechas es "Fecha inválida", la movemos al final, pero antes que "Sin fecha".
+        if (dateA === 'Fecha inválida') return 1;
+        if (dateB === 'Fecha inválida') return -1;
+
+        // En caso contrario, simplemente comparamos las fechas.
+        return new Date(b['FECHA CONSIGNACION SALDO']).getTime() - new Date(a['FECHA CONSIGNACION SALDO']).getTime();
+      },
     },
     {
       title: 'Acciones',
