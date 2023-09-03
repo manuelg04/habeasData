@@ -17,10 +17,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const passwordMatch = await bcrypt.compare(pass, user.pass);
 
         if (passwordMatch) {
+          const tokenDurationInSeconds = 3600;
           // Codifica la información del usuario en el token JWT
-          const token = jwt.sign({ usuario }, 'secret', { expiresIn: '100h' });
+          const token = jwt.sign({ usuario }, 'secret', { expiresIn: tokenDurationInSeconds });
           const { id, role } = user;
-          res.setHeader('Set-Cookie', [`token=${token}; Path=/; HttpOnly; SameSite=Strict Max-Age=3600`]);
+          res.setHeader('Set-Cookie', [`token=${token}; Path=/; HttpOnly; SameSite=Strict Max-Age=${tokenDurationInSeconds}`]);
           return res.status(200).json({
             token, id, usuario, role,
           });
