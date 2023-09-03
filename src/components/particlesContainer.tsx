@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-use-before-define */
 import { Particles } from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
@@ -62,7 +63,7 @@ const ParticlesContainer = () => {
             enable: true,
           },
           move: {
-            directions: 'none',
+            direction: 'none',
             enable: true,
             outModes: {
               default: 'bounce',
