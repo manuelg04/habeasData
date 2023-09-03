@@ -52,7 +52,7 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    axios.get('/api/controllers/verifyToken')
+    axios.get('/api/controllers/verifyToken', { withCredentials: true })
       .then((response) => {
         if (response.data.isValid) {
           dispatch(setUser(response.data.user));
