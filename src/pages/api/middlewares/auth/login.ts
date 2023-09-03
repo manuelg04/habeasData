@@ -18,9 +18,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (passwordMatch) {
           // Codifica la información del usuario en el token JWT
-          const token = jwt.sign({ usuario }, 'secret', { expiresIn: '20h' });
+          const token = jwt.sign({ usuario }, 'secret', { expiresIn: '100h' });
           const { id, role } = user;
-          res.setHeader('Set-Cookie', [`token=${token}; Path=/; HttpOnly; SameSite=Strict`]);
+          res.setHeader('Set-Cookie', [`token=${token}; Path=/; HttpOnly; SameSite=Strict Max-Age=3600`]);
           return res.status(200).json({
             token, id, usuario, role,
           });

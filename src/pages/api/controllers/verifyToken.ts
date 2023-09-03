@@ -8,7 +8,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (!token) {
     // Esto nos dirá si no encontramos el token en las cookies.
-    return res.status(401).json({ isValid: false });
+    return res.status(401).json({ isValid: false, message: 'Token not found in cookies' });
   }
 
   try {
@@ -18,6 +18,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(200).json({ isValid: true, user: decoded });
   } catch (error) {
-    return res.status(401).json({ isValid: false });
+    return res.status(401).json({ isValid: false, message: 'Token verification failed' });
   }
 }
