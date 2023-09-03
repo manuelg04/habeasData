@@ -51,17 +51,17 @@ const NavBar = () => {
     router.push('/login');
   };
 
-  useEffect(() => {
-    axios.get('/api/controllers/verifyToken', { withCredentials: true })
-      .then((response) => {
-        if (response.data.isValid) {
-          dispatch(setUser(response.data.user));
-        }
-      })
-      .catch((error) => {
+  // useEffect(() => {
+  //   axios.get('/api/controllers/verifyToken', { withCredentials: true })
+  //     .then((response) => {
+  //       if (response.data.isValid) {
+  //         dispatch(setUser(response.data.user));
+  //       }
+  //     })
+  //     .catch((error) => {
 
-      });
-  }, []);
+  //     });
+  // }, []);
 
   return (
     <Menu
