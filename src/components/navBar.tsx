@@ -50,16 +50,19 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    axios.get('/api/controllers/verifyToken', { withCredentials: true })
-      .then((response) => {
+    const verifyToken = async () => {
+      try {
+        const response = await axios.get('/api/controllers/verifyToken', { withCredentials: true });
         if (response.data.isValid) {
           dispatch(setUser(response.data.user));
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.log(error);
         console.error('Error al verificar el token');
-      });
+      }
+    };
+
+    verifyToken();
   }, []);
 
   return (

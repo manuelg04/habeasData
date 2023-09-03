@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           // Codifica la información del usuario en el token JWT
           const token = jwt.sign({ usuario }, 'secret', { expiresIn: tokenDurationInSeconds });
           const { id, role } = user;
-          res.setHeader('Set-Cookie', [`token=${token}; Path=/; HttpOnly; SameSite=Strict Max-Age=${tokenDurationInSeconds}`]);
+          res.setHeader('Set-Cookie', [`token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${tokenDurationInSeconds}`]);
           return res.status(200).json({
             token, id, usuario, role,
           });
