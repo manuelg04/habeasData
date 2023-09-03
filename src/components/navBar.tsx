@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-nested-ternary */
@@ -44,24 +45,22 @@ const NavBar = () => {
       }
     }
 
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('justLoggedIn');
-    }
     // Si no hay un token, solo redirige al usuario al login
     router.push('/login');
   };
 
-  // useEffect(() => {
-  //   axios.get('/api/controllers/verifyToken', { withCredentials: true })
-  //     .then((response) => {
-  //       if (response.data.isValid) {
-  //         dispatch(setUser(response.data.user));
-  //       }
-  //     })
-  //     .catch((error) => {
-
-  //     });
-  // }, []);
+  useEffect(() => {
+    axios.get('/api/controllers/verifyToken', { withCredentials: true })
+      .then((response) => {
+        if (response.data.isValid) {
+          dispatch(setUser(response.data.user));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        console.error('Error al verificar el token');
+      });
+  }, []);
 
   return (
     <Menu
