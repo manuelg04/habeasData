@@ -18,6 +18,7 @@ import { Menu, message } from 'antd';
 import '../styles/Login.module.css';
 import { selectUser } from '../redux/selector';
 import { setUser } from '../redux/userSlice';
+import ParticlesContainer from './particlesContainer';
 
 const { Item, SubMenu } = Menu;
 
@@ -74,8 +75,8 @@ const NavBar = () => {
         display: 'flex',
         justifyContent: 'center',
         borderBottom: 'none',
-        backgroundColor: '#ffffff', // Cambiado a gris claro
-        color: '#000000', // Cambiado a negro
+        backgroundColor: '#ffffff',
+        color: '#000000',
         paddingTop: '20px',
         paddingBottom: '20px',
       }}

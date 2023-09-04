@@ -149,6 +149,9 @@ export default function Login() {
                   <Button type="link" onClick={() => setRegistering(true)}>
                     Registrar
                   </Button>
+                  <Button type="link" onClick={() => router.push('/recoveryPassword')}>
+                    ¿Olvidaste tu contraseña?
+                  </Button>
                 </Form.Item>
               </Form>
 

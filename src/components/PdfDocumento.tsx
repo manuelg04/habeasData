@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Centrar la imagen
   },
 });
+
 // Create Document Component
 const MyDocument = ({ nombre, cedula, fecha }) => (
   <Document>
