@@ -12,7 +12,7 @@ const sora = Sora({
 
 const Layout = ({ children }) => (
   <div
-    className={`page bg-site text-white bg-cover bg-no-repeat ${sora.variable} font-sora relative`}
+    className={` text-black ${sora.variable} font-sora`}
   >
 
     {children}
