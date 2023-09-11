@@ -33,7 +33,11 @@ const RecoveryPassword: React.FC = () => {
         });
       }
     } catch (error) {
-      setMessage('Error al enviar la solicitud. Inténtalo de nuevo.');
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Vefique su correo electrónico para restablecer su contraseña.',
+      });
     } finally {
       setIsLoading(false);
     }
