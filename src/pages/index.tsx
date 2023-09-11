@@ -10,14 +10,12 @@ import 'slick-carousel/slick/slick-theme.css';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import ParticlesContainer from '../components/particlesContainer';
 
 import { fadeIn } from '../../variants';
 
 const Index = () => (
   <div className="bg-primary/90 h-full">
-    <ParticlesContainer />
-    <div className="w-full h-full bg-gradient-to-r from-primary/10 via-black/30 to-black/10">
+    <div className="w-full h-full bg-gradient-to-r text-yellow-400">
       <div className="text-center flex flex-col justify-center xl:pt-40 xl:text-left h-full container mx-auto">
         {/* title */}
         <motion.h1
@@ -31,7 +29,7 @@ const Index = () => (
           {' '}
           <br />
           {' '}
-          <span className="text-accent ">TERCERIZADOS </span>
+          <span className="text-yellow-400 ">TERCERIZADOS </span>
         </motion.h1>
         {/* subtitle */}
         <motion.p
@@ -39,7 +37,7 @@ const Index = () => (
           initial="hidden"
           animate="show"
           exit="hidden"
-          className="max-w-sm xl:max-w-xl mx-auto xl:mx-0 mb-10 xl:mb-16"
+          className="max-w-sm xl:max-w-xl mx-auto xl:mx-0 mb-10 xl:mb-16 text-white"
         >
           Somos una empresa de transporte de carga y logística, con más de 10 años de experiencia en el sector. Contamos con una amplia flota de vehículos, que nos permite ofrecer un servicio de calidad y seguridad.
         </motion.p>
@@ -65,7 +63,7 @@ const Index = () => (
           {' '}
           <br />
           {' '}
-          <span className="text-accent ">CLIENTES </span>
+          <span className="text-yellow-400 ">CLIENTES </span>
         </motion.h1>
         <div className="flex space-x-4">
           <Image
@@ -99,8 +97,71 @@ const Index = () => (
         </div>
 
       </div>
-    </div>
+      <div className="text-center flex flex-col justify-center xl:pt-40 xl:text-left h-full container mx-auto">
+        {/* title */}
+        <motion.h1
+          variants={fadeIn('down', 0.2)}
+          initial="hidden"
+          animate="show"
+          exit="hidden"
+          className="h1"
+        >
+          PORQUÉ ELEGIRNOS
+          {' '}
+          <br />
+          {' '}
 
+        </motion.h1>
+        {/* subtitle */}
+        {/* btn */}
+        <div className="flex justify-center xl:hidden relative" />
+        <motion.div
+          variants={fadeIn('down', 0.4)}
+          initial="hidden"
+          animate="show"
+          exit="hidden"
+          className="hidden xl:flex"
+        />
+      </div>
+      <div className="flex flex-wrap justify-around">
+        <div className="m-4 bg-white rounded-lg shadow-lg w-64">
+          <div className="p-4">
+            <h2 className="font-bold text-lg">LÍDERES EN EL SECTOR TRANSPORTE</h2>
+            <p className="text-sm">Descripción o contenido del card.</p>
+          </div>
+        </div>
+        <div className="m-4 bg-white rounded-lg shadow-lg w-64">
+          <div className="p-4">
+            <h2 className="font-bold text-lg">NUESTRAS CIFRAS NOS RESPALDAN</h2>
+            <p className="text-sm">Descripción o contenido del card.</p>
+          </div>
+        </div>
+        <div className="m-4 bg-white rounded-lg shadow-lg w-64">
+          <div className="p-4">
+            <h2 className="font-bold text-lg">TRASPASAMOS FRONTERAS</h2>
+            <p className="text-sm">Descripción o contenido del card.</p>
+          </div>
+        </div>
+        <div className="m-4 bg-white rounded-lg shadow-lg w-64">
+          <div className="p-4">
+            <h2 className="font-bold text-lg">COMPROMETIDOS CON EL CLIENTE</h2>
+            <p className="text-sm">Descripción o contenido del card.</p>
+          </div>
+        </div>
+        <div className="m-4 bg-white rounded-lg shadow-lg w-64">
+          <div className="p-4">
+            <h2 className="font-bold text-lg">GARANTIZAMOS NUESTRO SERVICIO</h2>
+            <p className="text-sm">Descripción o contenido del card.</p>
+          </div>
+        </div>
+        <div className="m-4 bg-white rounded-lg shadow-lg w-64">
+          <div className="p-4">
+            <h2 className="font-bold text-lg">GERENCIAMOS RUTAS</h2>
+            <p className="text-sm">Descripción o contenido del card.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 );

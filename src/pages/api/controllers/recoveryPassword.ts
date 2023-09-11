@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         from: 'habeasdata@transportesmtm.com', // sender address
         to: user.email,
         subject: 'Nuevo formulario de habeas data',
-        text: `Haz clic en este enlace para restablecer tu contraseña: http://localhost:3000/recuperar-clave?token=${recoveryToken}`,
+        text: `Haz clic en este enlace para restablecer tu contraseña: https://transportesmtm.co/recuperar-clave?token=${recoveryToken}`,
       };
 
       return await transporter.sendMail({
