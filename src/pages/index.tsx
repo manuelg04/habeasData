@@ -26,9 +26,7 @@ const Index = () => (
           className="h1"
         >
           TRANSPORTES MTM SERVICIOS
-          {' '}
           <br />
-          {' '}
           <span className="text-yellow-400 ">TERCERIZADOS </span>
         </motion.h1>
         {/* subtitle */}
@@ -123,44 +121,45 @@ const Index = () => (
           className="hidden xl:flex"
         />
       </div>
-      <div className="flex flex-wrap justify-around">
+      <div className="grid grid-cols-3 gap-3 justify-items-center px-44">
         <div className="m-4 bg-white rounded-lg shadow-lg w-64">
           <div className="p-4">
             <h2 className="font-bold text-lg">LÍDERES EN EL SECTOR TRANSPORTE</h2>
-            <p className="text-sm">Descripción o contenido del card.</p>
+            <p className="text-sm text-black">Descripción o contenido del card.</p>
           </div>
         </div>
         <div className="m-4 bg-white rounded-lg shadow-lg w-64">
           <div className="p-4">
             <h2 className="font-bold text-lg">NUESTRAS CIFRAS NOS RESPALDAN</h2>
-            <p className="text-sm">Descripción o contenido del card.</p>
+            <p className="text-sm text-black">10 años de experiencia en el mercado.</p>
           </div>
         </div>
         <div className="m-4 bg-white rounded-lg shadow-lg w-64">
           <div className="p-4">
-            <h2 className="font-bold text-lg">TRASPASAMOS FRONTERAS</h2>
-            <p className="text-sm">Descripción o contenido del card.</p>
+            <h2 className="font-bold text-lg">Cobertura a nivel nacional</h2>
+            <p className="text-sm text-black">11 agencias repartidas en todo territorio colombiano.</p>
           </div>
         </div>
         <div className="m-4 bg-white rounded-lg shadow-lg w-64">
           <div className="p-4">
             <h2 className="font-bold text-lg">COMPROMETIDOS CON EL CLIENTE</h2>
-            <p className="text-sm">Descripción o contenido del card.</p>
+            <p className="text-sm text-black">Generamos la calidad, la seguridad y la excelencia en cada viaje realizado.</p>
           </div>
         </div>
         <div className="m-4 bg-white rounded-lg shadow-lg w-64">
           <div className="p-4">
             <h2 className="font-bold text-lg">GARANTIZAMOS NUESTRO SERVICIO</h2>
-            <p className="text-sm">Descripción o contenido del card.</p>
+            <p className="text-sm text-black">Gran cobertura en cada una de las polizas generando seguridad y respaldo en la operación.</p>
           </div>
         </div>
         <div className="m-4 bg-white rounded-lg shadow-lg w-64">
           <div className="p-4">
             <h2 className="font-bold text-lg">GERENCIAMOS RUTAS</h2>
-            <p className="text-sm">Descripción o contenido del card.</p>
+            <p className="text-sm text-black">Monitoreo GPS 24/7, reportes telefonicos, trazabilidad y transparencia.</p>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
