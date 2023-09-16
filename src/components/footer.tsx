@@ -1,5 +1,5 @@
 import {
-  Layout, Row, Typography, Divider, Col, Card,
+  Layout, Row, Typography, Divider, Col,
 } from 'antd';
 
 const { Footer } = Layout;

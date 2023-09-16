@@ -18,8 +18,6 @@ import { Menu, message } from 'antd';
 import '../styles/Login.module.css';
 import { selectUser } from '../redux/selector';
 import { setUser } from '../redux/userSlice';
-import ParticlesContainer from './particlesContainer';
-import Image from 'next/image';
 
 const { Item, SubMenu } = Menu;
 
