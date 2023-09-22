@@ -25,7 +25,7 @@ const Index = () => (
           exit="hidden"
           className="h1"
         >
-          TRANSPORTES MTM SERVICIOS
+          TRANSPORTES MTM XDDD
           <br />
           <span className="text-yellow-400 ">TERCERIZADOS </span>
         </motion.h1>
