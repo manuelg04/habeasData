@@ -1,8 +1,8 @@
+/* eslint-disable react/no-children-prop */
 /* eslint-disable no-use-before-define */
 /* eslint-disable @next/next/no-img-element */
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import ButtonPrimary from './misc/ButtonPrimary';
 import getScrollAnimation from '../utils/getScrollAnimation';
 import ScrollAnimationWrapper from './layout/ScrollAnimationWrapper';
 import Testimoni from './Testimoni';
@@ -18,7 +18,7 @@ const Pricing = () => {
       <div className="max-w-screen-xl  px-6 sm:px-8 lg:px-16 mx-auto flex flex-col w-full text-center justify-center">
 
         <div className="flex flex-col w-full my-16">
-          <ScrollAnimationWrapper>
+          <ScrollAnimationWrapper className={undefined}>
             <motion.h3
               variants={scrollAnimation}
               className="text-2xl sm:text-3xl lg:text-4xl font-medium text-black-600 leading-relaxed w-9/12 sm:w-6/12 lg:w-4/12 mx-auto"
@@ -31,8 +31,8 @@ const Pricing = () => {
               locations.
             </motion.p>
           </ScrollAnimationWrapper>
-          <ScrollAnimationWrapper />
-          <ScrollAnimationWrapper>
+          <ScrollAnimationWrapper children={undefined} className={undefined} />
+          <ScrollAnimationWrapper className={undefined}>
             <motion.div className="w-full flex justify-evenly items-center mt-4 flex-wrap lg:flex-nowrap" variants={scrollAnimation}>
               {/* <Netflix className="h-18 w-auto" /> */}
               <img
@@ -64,7 +64,7 @@ const Pricing = () => {
           </ScrollAnimationWrapper>
         </div>
         <div className="flex flex-col w-full my-16" id="testimoni">
-          <ScrollAnimationWrapper>
+          <ScrollAnimationWrapper className={undefined}>
             <motion.h3
               variants={scrollAnimation}
               className="text-2xl sm:text-3xl lg:text-4xl font-medium text-black-600 leading-normal w-9/12 sm: lg:w-4/12 mx-auto"
@@ -85,7 +85,7 @@ const Pricing = () => {
               <Testimoni />
             </motion.div>
           </ScrollAnimationWrapper>
-          <ScrollAnimationWrapper className="relative w-full mt-16" />
+          <ScrollAnimationWrapper className="relative w-full mt-16" children={undefined} />
         </div>
       </div>
     </div>
