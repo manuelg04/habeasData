@@ -8,8 +8,9 @@ import { AnimatePresence } from 'framer-motion';
 import Navbar from '../components/navBar';
 import store from '../redux/store';
 import MyFooter from '../components/footer';
-import Layout from '../components/layout';
+import Layout from '../components/prelayout';
 import Transition from '../components/transition';
+import '../styles/slick.css';
 
 const persistor = persistStore(store);
 
