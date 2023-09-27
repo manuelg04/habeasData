@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/no-children-prop */
 /* eslint-disable max-len */
 /* eslint-disable no-use-before-define */
 import React, { useMemo } from 'react';
@@ -28,7 +30,7 @@ const Hero = ({
       className="max-w-screen-xl mt-24 px-8 xl:px-16 mx-auto"
       id="about"
     >
-      <ScrollAnimationWrapper>
+      <ScrollAnimationWrapper className={undefined}>
         <motion.div
           className="grid grid-flow-row sm:grid-flow-col grid-rows-2 md:grid-rows-1 sm:grid-cols-2 gap-8 py-6 sm:py-16"
           variants={scrollAnimation}
@@ -43,7 +45,7 @@ const Hero = ({
             <p className="text-gray-500 mt-4 mb-6">
               Somos una empresa de transporte de carga y logística, con más de 10 años de experiencia en el sector. Contamos con una amplia flota de vehículos, que nos permite ofrecer un servicio de calidad y seguridad.
             </p>
-            <ButtonPrimary>Consultar Viajes</ButtonPrimary>
+            <ButtonPrimary addClass={undefined}>Consultar Viajes</ButtonPrimary>
           </div>
           <div className="flex w-full">
             <motion.div className="h-full w-full" variants={scrollAnimation}>
